@@ -162,8 +162,8 @@
     hazard(ctx, 0, 128, W, 20, 28)
 
     // headline
-    ctx.fillStyle = C.ink; ctx.font = '700 74px Barlow'; ctx.textAlign = 'center'
-    ctx.fillText('Gaadi block hai?', W / 2, 234)
+    ctx.fillStyle = C.ink; ctx.font = '700 66px Barlow'; ctx.textAlign = 'center'
+    ctx.fillText('Need this car moved?', W / 2, 234)
     ctx.font = '700 48px Barlow'
     const l2 = 'Scan to reach the owner'
     const l2w = ctx.measureText(l2).width
