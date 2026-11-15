@@ -6,6 +6,10 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>
         Refresh
       </button>
+      <button type="button" class="tool" id="printAll">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8"/><path d="M7 14h10v7H7z"/></svg>
+        Download all
+      </button>
       <button type="button" class="tool" id="logout">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>
         Log out
@@ -25,6 +29,17 @@
 
   <section id="panel" class="panel" hidden aria-label="Orders">
     <div class="seg" id="filters" role="group" aria-label="Filter by status"></div>
+    <details class="print-opts">
+      <summary>Sticker print settings</summary>
+      <label class="field" for="callNo">Call number printed on the front <span class="opt">(optional, leave empty until you have a virtual number)</span>
+        <input id="callNo" inputmode="tel" maxlength="20" placeholder="e.g. 080 4567 8901" autocomplete="off">
+      </label>
+      <label class="field" for="findTag">Find an order by sticker code
+        <input id="findTag" maxlength="9" placeholder="e.g. GP-7K4Q2M" autocomplete="off" spellcheck="false">
+      </label>
+      <p class="hint" id="findMsg" role="status" aria-live="polite"></p>
+      <p class="hint">"Download all" makes one PDF of every order that is not cancelled: packing slip, then FRONT and BACK sticker sheets (A4, 75 × 100 mm stickers, print at 100%).</p>
+    </details>
     <div class="state" id="msg" role="status" aria-live="polite"></div>
     <ol class="orders" id="rows"></ol>
   </section>

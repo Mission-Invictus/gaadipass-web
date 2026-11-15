@@ -110,3 +110,10 @@ body.viewer-open{overflow:hidden}
 .viewer-close:hover{background:#fff}
 .viewer-stage{flex:1;min-height:0;display:grid;place-items:center;padding:var(--s4);overflow:auto}
 .viewer-stage img{max-width:100%;max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);width:auto;height:auto;object-fit:contain;box-shadow:0 18px 40px -16px rgba(0,0,0,.8)}
+.print-opts{margin:0 0 var(--s4);padding:var(--s3) var(--s4);background:var(--concrete-700)}
+.print-opts summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+.print-opts .field{margin-top:var(--s3)}
+.print-opts .hint{color:var(--text-dim);font-size:.9rem;margin:var(--s3) 0 0}
+.print-opts .opt{font-weight:400;color:var(--text-dim)}
+.tool-print{background:var(--yellow);color:var(--ink)}
+.tool-print svg{stroke:var(--ink)}

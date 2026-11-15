@@ -104,6 +104,10 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18"/><path d="m4 16 5-5 4 4 2-2 5 5"/><path d="M14.5 8.5h.01"/></svg>
             View screenshot
           </button>
+          <button type="button" class="tool tool-print" data-print="${no}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8"/><path d="M7 14h10v7H7z"/></svg>
+            Print stickers
+          </button>
           <button type="button" class="tool" data-copy="${no}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg>
             Copy address
@@ -209,10 +213,59 @@
     return ok
   }
 
+  // ---------- sticker PDFs ----------
+  const CALL_KEY = 'gpCallNo'
+  try { $('callNo').value = localStorage.getItem(CALL_KEY) || '' } catch (e) {}
+  $('callNo').addEventListener('change', () => { try { localStorage.setItem(CALL_KEY, $('callNo').value.trim()) } catch (e) {} })
+
+  async function printOrders (list, btn, filename) {
+    if (!list.length) { setState('empty', 'No orders to print.'); return }
+    if (!window.GPSticker || !window.jspdf || !window.qrcode) { setState('error', 'Print tools did not load. Refresh the page and try again.'); return }
+    const label = btn.lastChild.textContent
+    btn.disabled = true
+    btn.lastChild.textContent = ' Making PDF…'
+    try {
+      await window.GPSticker.pdfForOrders(list, { callNumber: $('callNo').value.trim() }, filename)
+      const n = list.reduce((a, o) => a + (Number(o.packs) || 1) * 2, 0)
+      const li = btn.closest('.order')
+      if (li) rowMsg(li, `PDF downloaded: ${n} stickers (front + back) and the packing slip.`, 'ok')
+      else setState('', '')
+    } catch (err) {
+      const li = btn.closest('.order')
+      const m = 'Could not make the PDF. ' + (err && err.message ? err.message : '')
+      if (li) rowMsg(li, m, 'error'); else setState('error', m)
+    } finally {
+      btn.disabled = false
+      btn.lastChild.textContent = label
+    }
+  }
+  $('printAll').addEventListener('click', () => {
+    const list = orders.filter((o) => o.status !== 'cancelled')
+    const d = new Date()
+    printOrders(list, $('printAll'), `GaadiPass-all-orders-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}.pdf`)
+  })
+
+  // find which order a sticker code belongs to (codes are computed from the order number)
+  $('findTag').addEventListener('input', async () => {
+    const want = $('findTag').value.toUpperCase().replace(/[^23456789A-Z]/g, '').replace(/^GP/, '')
+    if (want.length < 6) { $('findMsg').textContent = ''; return }
+    $('findMsg').textContent = 'Searching…'
+    for (const o of orders) {
+      const tags = await window.GPSticker.tagsFor(o.orderNo, (Number(o.packs) || 1) * 2)
+      if (tags.some((t) => t.replace('GP-', '') === want.slice(0, 6))) {
+        $('findMsg').textContent = `GP-${want.slice(0, 6)} → ${o.orderNo} · ${o.name} · ${o.phone}${o.carNumber ? ' · ' + o.carNumber : ''}`
+        return
+      }
+    }
+    $('findMsg').textContent = `No order has code GP-${want.slice(0, 6)}.`
+  })
+
   // ---------- events ----------
   $('rows').addEventListener('click', async (e) => {
     const shot = e.target.closest('[data-shot]')
     if (shot) return openShot(shot, shot.getAttribute('data-shot'))
+    const pr = e.target.closest('[data-print]')
+    if (pr) return printOrders([find(pr.getAttribute('data-print'))].filter(Boolean), pr, `GaadiPass-${pr.getAttribute('data-print')}.pdf`)
     const copy = e.target.closest('[data-copy]')
     if (copy) {
       const o = find(copy.getAttribute('data-copy'))

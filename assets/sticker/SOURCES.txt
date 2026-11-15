@@ -1,0 +1,1 @@
+front-sample.png / back-sample.png: rendered 2026-11-15 by js/sticker.js (drawFront/drawBack) at 886x1181 px (75x100 mm @ 300 dpi) with sample code GP-7K4Q2M. Not a photo; regenerate from sticker.js if the design changes.

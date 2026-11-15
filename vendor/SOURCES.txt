@@ -1,0 +1,1 @@
+qrcode-generator 1.4.4 (MIT, Kazuhiko Arase) and jsPDF 2.5.1 (MIT) from cdnjs.cloudflare.com, self-hosted 2026-11-15.

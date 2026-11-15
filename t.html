@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reach this car's owner — GaadiPass</title>
+<meta name="description" content="Contact the owner of a car with a GaadiPass sticker.">
+<meta name="theme-color" content="#24272a">
+<link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/scan.css">
+<meta name="robots" content="noindex">
+</head>
+<body class="page-t">
+<header class="wrap site-nav">
+  <a class="brand" href="/" aria-label="GaadiPass home">GAADI<b>PASS</b></a>
+  <nav class="links" aria-label="Main">
+    <a class="opt" href="/#how">How it works</a>
+    <a class="opt" href="/#price">Price</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+</header>
+<main id="main">
+<div class="wrap scan">
+  <section class="scan-plate pillar" aria-labelledby="scanTitle">
+    <p class="scan-code">Sticker code <b class="num" id="scanCode">GP-······</b></p>
+    <h1 id="scanTitle">Need this car's owner?</h1>
+    <p class="scan-lead">Tell us what's wrong. We contact the owner for you. Their number stays private, and so does yours.</p>
+  </section>
+  <div class="hazard" aria-hidden="true"></div>
+
+  <form class="scan-form" id="scanForm">
+    <fieldset class="reasons">
+      <legend>What's the problem?</legend>
+      <label class="reason"><input type="radio" name="reason" value="This car is blocking my car / the exit" checked><span>Blocking my car</span></label>
+      <label class="reason"><input type="radio" name="reason" value="The lights are left on"><span>Lights left on</span></label>
+      <label class="reason"><input type="radio" name="reason" value="The car is about to be towed"><span>Towing</span></label>
+      <label class="reason"><input type="radio" name="reason" value="Window open / something wrong with the car"><span>Window open / other</span></label>
+      <label class="reason reason-urgent"><input type="radio" name="reason" value="URGENT: accident / emergency"><span>Accident or emergency</span></label>
+    </fieldset>
+    <label class="field" for="scanWhere">Where is the car? <span class="opt">(optional)</span>
+      <input id="scanWhere" maxlength="80" placeholder="e.g. B2 basement, near lift">
+    </label>
+    <a class="btn scan-go" id="scanWa" href="https://wa.me/919795558442">Alert the owner on WhatsApp</a>
+    <p class="scan-note">Opens WhatsApp with the code and your message filled in. Tap send, and we take it from there.</p>
+    <p class="scan-note">No WhatsApp? <a id="scanCall" href="tel:+919795558442">Call GaadiPass</a> and tell us the sticker code.</p>
+  </form>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search)
+  var raw = (p.get('c') || '').toUpperCase().replace(/^GP-?/, '').replace(/[^23456789ABCDEFGHJKLMNPQRSTUVWXYZ]/g, '').slice(0, 6)
+  var code = raw ? 'GP-' + raw : ''
+  if (code) document.getElementById('scanCode').textContent = code
+  var wa = document.getElementById('scanWa')
+  var base = wa.href.split('?')[0]
+  function update () {
+    var r = document.querySelector('input[name=reason]:checked')
+    var where = document.getElementById('scanWhere').value.trim()
+    var msg = 'GaadiPass alert' + (code ? ' for sticker ' + code : '') + ': ' + (r ? r.value : '') + (where ? '. Location: ' + where : '') + '.'
+    wa.href = base + '?text=' + encodeURIComponent(msg)
+  }
+  document.getElementById('scanForm').addEventListener('change', update)
+  document.getElementById('scanWhere').addEventListener('input', update)
+  document.getElementById('scanForm').addEventListener('submit', function (e) { e.preventDefault() })
+  update()
+})()
+</script>
+
+</main>
+<footer class="site-foot">
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="wrap foot-in">
+    <nav aria-label="Policies">
+      <a href="/">Home</a><a href="/order.html">Order</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a>
+      <a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a>
+    </nav>
+    <p>© 2026 Mission Invictus · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449</p>
+    <p><a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="https://wa.me/919795558442">WhatsApp us</a> · <a href="tel:+919795558442">Call us</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

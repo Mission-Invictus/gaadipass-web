@@ -30,7 +30,9 @@ PAGES = {
     "refund": ("Refund & Cancellation — GaadiPass", "GaadiPass refund and cancellation policy.", ["css/pages.css"], "", ""),
     "shipping": ("Shipping Policy — GaadiPass", "GaadiPass delivery times and charges.", ["css/pages.css"], "", ""),
     "contact": ("Contact Us — GaadiPass", "Contact Mission Invictus about GaadiPass.", ["css/pages.css"], "", ""),
-    "admin": ("Orders admin — GaadiPass", "Admin.", ["css/pages.css", "css/admin.css"], '<script src="/admin.js" defer></script>',
+    "t": ("Reach this car's owner — GaadiPass", "Contact the owner of a car with a GaadiPass sticker.", ["css/scan.css"], "",
+          '<meta name="robots" content="noindex">'),
+    "admin": ("Orders admin — GaadiPass", "Admin.", ["css/pages.css", "css/admin.css"], '<script src="/vendor/qrcode-generator.min.js" defer></script><script src="/vendor/jspdf.umd.min.js" defer></script><script src="/js/sticker.js" defer></script><script src="/admin.js" defer></script>',
               '<meta name="robots" content="noindex,nofollow">'),
 }
 
