@@ -6,6 +6,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 UPDATED = "15 November 2026"
 EMAIL = "founder@missioninvictus.com"
+PHONE = "+91 97955 58442"
+PHONE_TEL = "+919795558442"
 
 NAV = ('<nav><a class="brand" href="/">GaadiPass</a><a href="/#how">How it works</a>'
        '<a href="/#price">Price</a><a href="/contact.html">Contact</a></nav>')
@@ -13,7 +15,7 @@ FOOT = ('<footer><div><a href="/">Home</a><a href="/terms.html">Terms</a><a href
         '<a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a>'
         '<a href="/contact.html">Contact</a></div>'
         f'<p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · '
-        f'Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:{EMAIL}">{EMAIL}</a></p></footer>')
+        f'Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:{EMAIL}">{EMAIL}</a> · <a href="tel:{PHONE_TEL}">{PHONE}</a></p></footer>')
 
 
 def page(name, title, body, desc="GaadiPass — a car sticker so anyone can reach you without seeing your phone number."):
@@ -54,7 +56,7 @@ page("index.html", "Aapki gaadi ka digital passport", f"""
   <li>Your phone rings — both numbers stay hidden.</li>
 </ol>
 <div class="price" id="price">
-  <div class="tag">Launch offer</div>
+  <div class="tag">Pre-order · Launch offer</div>
   <div class="amt">₹399</div>
   <div>for <b>2 GaadiPass stickers</b> · inclusive of all taxes</div>
   <ul>
@@ -62,8 +64,8 @@ page("index.html", "Aapki gaadi ka digital passport", f"""
     <li>Masked calling &amp; alerts to your number — no monthly fee</li>
     <li>Free delivery in Bengaluru · pan-India delivery available</li>
   </ul>
-  <a class="btn" href="mailto:{EMAIL}?subject=GaadiPass%20order">Order now</a>
-  <p class="muted">Now taking orders in Bengaluru. Payment by UPI or online payment.</p>
+  <a class="btn" href="mailto:{EMAIL}?subject=GaadiPass%20pre-order">Pre-order now</a>
+  <p class="muted">Pre-orders open in Bengaluru — the first batch ships in about 2–3 weeks. Payment by UPI or online payment. Full refund if you cancel before dispatch.</p>
 </div>
 <h2>FAQ</h2>
 <p><b>Will people see my phone number?</b> No. Calls go through a masked number; neither side sees the other's number.</p>
@@ -115,7 +117,7 @@ page("shipping.html", "Shipping Policy", f"""
 <h1>Shipping Policy</h1><p class="muted">Last updated: {UPDATED}</p>
 <table>
   <tr><th>Area</th><th>Dispatch</th><th>Delivery time</th><th>Charge</th></tr>
-  <tr><td>Bengaluru</td><td>Within 1–2 working days</td><td>1–3 working days</td><td>Free</td></tr>
+  <tr><td>Bengaluru</td><td>Within 1–2 working days (pre-orders: when the batch is ready, ~2–3 weeks)</td><td>1–3 working days</td><td>Free</td></tr>
   <tr><td>Rest of India</td><td>Within 1–2 working days</td><td>3–7 working days</td><td>Included in price</td></tr>
 </table>
 <p>Orders are shipped by courier or India Post to the address given when ordering. You will receive tracking details by WhatsApp, SMS or email once dispatched.</p>
@@ -129,6 +131,7 @@ page("contact.html", "Contact Us", f"""
   <tr><td>Business</td><td>Mission Invictus (proprietor: Ajay Singh)</td></tr>
   <tr><td>Product</td><td>GaadiPass</td></tr>
   <tr><td>Email</td><td><a href="mailto:{EMAIL}">{EMAIL}</a></td></tr>
+  <tr><td>Phone / WhatsApp</td><td><a href="tel:{PHONE_TEL}">{PHONE}</a></td></tr>
   <tr><td>Address</td><td>Kasavanahalli, Sarjapur Road, Bengaluru, Karnataka 560035, India</td></tr>
   <tr><td>Udyam Reg. No.</td><td>UDYAM-KR-03-0789449</td></tr>
   <tr><td>Support hours</td><td>Mon–Sat, 10:00 AM – 7:00 PM IST</td></tr>
