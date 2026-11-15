@@ -10,7 +10,7 @@
   const SITE = 'gaadipass.missioninvictus.com'
   const C = {
     yellow: '#ffc400', ink: '#121314', paper: '#ffffff', paint: '#e9ebe7',
-    concrete: '#24272a', concrete2: '#2f3336', text: '#eef0ec', dim: '#b4b9b5', soft: '#3a3d3f'
+    concrete: '#24272a', concrete2: '#2f3336', text: '#eef0ec', dim: '#b4b9b5', soft: '#3a3d3f', red: '#d7261e'
   }
   const ALPHA = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ' // no 0/O/1/I — easy to read aloud
 
@@ -107,10 +107,43 @@
   }
   function stepRow (ctx, n, text, x, y, h) {
     ctx.fillStyle = C.yellow; ctx.fillRect(x, y - h * 0.72, h * 0.86, h * 0.86)
-    ctx.fillStyle = C.ink; ctx.font = `900 ${Math.round(h * 0.7)}px Stencil`; ctx.textAlign = 'center'
-    ctx.fillText(String(n), x + h * 0.43, y - h * 0.04); ctx.textAlign = 'left'
+    ctx.fillStyle = C.ink; ctx.font = `700 ${Math.round(h * 0.62)}px Barlow`; ctx.textAlign = 'center'
+    ctx.fillText(String(n), x + h * 0.43, y - h * 0.08); ctx.textAlign = 'left'
     ctx.fillStyle = C.text; ctx.font = `600 ${Math.round(h * 0.52)}px Barlow`
     ctx.fillText(text, x + h * 1.1, y - h * 0.08)
+  }
+  function spaced (ctx, text, x, y, px, align) {
+    const has = 'letterSpacing' in ctx
+    if (has) ctx.letterSpacing = px + 'px'
+    ctx.textAlign = align || 'left'; ctx.fillText(text, x, y); ctx.textAlign = 'left'
+    if (has) ctx.letterSpacing = '0px'
+  }
+  // simple use-case icons, drawn so they print crisp at any size
+  function icon (ctx, kind, cx, cy, r) {
+    ctx.save(); ctx.lineWidth = r * 0.16; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+    if (kind === 'parking') {
+      ctx.fillStyle = C.paper; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill()
+      ctx.fillStyle = C.ink; ctx.font = `700 ${r * 1.25}px Barlow`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      ctx.fillText('P', cx, cy + r * 0.06)
+      ctx.strokeStyle = C.red; ctx.beginPath(); ctx.arc(cx, cy, r * 0.9, 0, 7); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(cx - r * 0.64, cy - r * 0.64); ctx.lineTo(cx + r * 0.64, cy + r * 0.64); ctx.stroke()
+    } else if (kind === 'lights') {
+      ctx.strokeStyle = C.ink; ctx.fillStyle = C.ink
+      ctx.beginPath(); ctx.moveTo(cx - r * 0.15, cy - r * 0.6); ctx.quadraticCurveTo(cx - r * 0.95, cy, cx - r * 0.15, cy + r * 0.6); ctx.closePath(); ctx.fill()
+      for (const dy of [-0.5, -0.17, 0.17, 0.5]) { ctx.beginPath(); ctx.moveTo(cx + r * 0.12, cy + r * dy); ctx.lineTo(cx + r * 0.85, cy + r * dy); ctx.stroke() }
+    } else if (kind === 'alert') {
+      ctx.fillStyle = C.ink; ctx.beginPath(); ctx.moveTo(cx, cy - r * 0.9); ctx.lineTo(cx + r, cy + r * 0.78); ctx.lineTo(cx - r, cy + r * 0.78); ctx.closePath(); ctx.fill()
+      ctx.fillStyle = C.yellow; ctx.font = `700 ${r * 1.1}px Barlow`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      ctx.fillText('!', cx, cy + r * 0.26)
+    } else if (kind === 'tow') {
+      ctx.strokeStyle = C.ink; ctx.fillStyle = C.ink
+      ctx.fillRect(cx - r * 0.95, cy - r * 0.2, r * 1.3, r * 0.55)          // truck body
+      ctx.fillRect(cx - r * 0.95, cy - r * 0.62, r * 0.55, r * 0.5)         // cab
+      ctx.beginPath(); ctx.moveTo(cx + r * 0.1, cy - r * 0.2); ctx.lineTo(cx + r * 0.75, cy - r * 0.75); ctx.lineTo(cx + r * 0.75, cy + r * 0.05); ctx.stroke() // boom + hook
+      ctx.fillStyle = C.paper
+      for (const wx of [-0.6, 0.05]) { ctx.beginPath(); ctx.arc(cx + r * wx, cy + r * 0.42, r * 0.2, 0, 7); ctx.fillStyle = C.ink; ctx.fill() }
+    }
+    ctx.restore()
   }
 
   // ---------- FRONT (faces outside) ----------
@@ -118,39 +151,55 @@
     opts = opts || {}
     canvas.width = W; canvas.height = H
     const ctx = canvas.getContext('2d')
+    ctx.textBaseline = 'alphabetic'
     ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H)
 
-    // brand band
-    ctx.fillStyle = C.yellow; ctx.fillRect(0, 0, W, 150)
-    const bw = (() => { ctx.font = '900 104px Stencil'; return ctx.measureText('GAADI').width + ctx.measureText('PASS').width + 104 * 0.28 })()
-    brand(ctx, (W - bw) / 2, 118, 104, false)
-    hazard(ctx, 0, 150, W, 22, 30)
+    // brand band (the logo keeps the brand stencil; everything else is plain and easy to read)
+    ctx.fillStyle = C.yellow; ctx.fillRect(0, 0, W, 128)
+    const bs = 92
+    const bw = (() => { ctx.font = `900 ${bs}px Stencil`; return ctx.measureText('GAADI').width + ctx.measureText('PASS').width + bs * 0.28 })()
+    brand(ctx, (W - bw) / 2, 102, bs, false)
+    hazard(ctx, 0, 128, W, 20, 28)
 
-    // hook
-    centerText(ctx, 'GAADI BLOCK HAI?', 268, '900 92px Stencil', C.ink)
-    centerText(ctx, 'Reach the owner. Number stays hidden.', 322, '600 36px Barlow', C.soft)
+    // headline
+    ctx.fillStyle = C.ink; ctx.font = '700 74px Barlow'; ctx.textAlign = 'center'
+    ctx.fillText('Gaadi block hai?', W / 2, 234)
+    ctx.font = '700 48px Barlow'
+    const l2 = 'Scan to reach the owner'
+    const l2w = ctx.measureText(l2).width
+    ctx.fillStyle = C.yellow; ctx.fillRect((W - l2w) / 2 - 6, 282, l2w + 12, 16)
+    ctx.fillStyle = C.ink; ctx.fillText(l2, W / 2, 290); ctx.textAlign = 'left'
 
     // QR
-    const qs = 430, qx = (W - qs) / 2, qy = 350
+    const qs = 372, qx = (W - qs) / 2, qy = 322
     drawQR(ctx, scanUrl(tag), qx, qy, qs)
-    corners(ctx, qx - 14, qy - 14, qs + 28, 58, 12, C.ink)
-    centerText(ctx, 'SCAN WITH YOUR PHONE CAMERA', 840, '700 30px Barlow', C.ink)
+    corners(ctx, qx - 12, qy - 12, qs + 24, 52, 11, C.ink)
+    centerText(ctx, 'Phone camera, Google Lens or any QR app', 752, '600 29px Barlow', C.soft)
+
+    // when to scan
+    const items = [['parking', 'Wrong parking'], ['lights', 'Lights on'], ['tow', 'Towing'], ['alert', 'Emergency']]
+    const colW = (W - 64) / 4
+    items.forEach(([k, label], i) => {
+      const cx = 32 + colW * i + colW / 2
+      icon(ctx, k, cx, 812, 36)
+      ctx.fillStyle = C.ink; ctx.font = '700 25px Barlow'; ctx.textAlign = 'center'; ctx.fillText(label, cx, 882); ctx.textAlign = 'left'
+    })
 
     // steps
-    const sy = 868, sh = 196
+    const sy = 904, sh = 172
     ctx.fillStyle = C.ink; ctx.fillRect(0, sy, W, sh)
     const call = (opts.callNumber || '').trim()
-    stepRow(ctx, 1, 'Scan the QR code above', 48, sy + 66, 58)
-    stepRow(ctx, 2, 'We alert the owner for you', 48, sy + 124, 58)
-    stepRow(ctx, 3, call ? 'No smartphone? Call ' + call : 'Owner\'s number stays private', 48, sy + 182, 58)
+    stepRow(ctx, 1, 'Scan the QR code above', 48, sy + 60, 52)
+    stepRow(ctx, 2, 'We alert the owner for you', 48, sy + 112, 52)
+    stepRow(ctx, 3, call ? 'No smartphone? Call ' + call : "Owner's number stays private", 48, sy + 164, 52)
 
     // code bar
-    ctx.fillStyle = C.yellow; ctx.fillRect(0, sy + sh, W, 92)
-    ctx.fillStyle = C.ink; ctx.font = '700 28px Barlow'; ctx.fillText('CODE', 48, sy + sh + 58)
-    ctx.font = '900 76px Stencil'; ctx.textAlign = 'right'; ctx.fillText(tag, W - 48, sy + sh + 74); ctx.textAlign = 'left'
+    ctx.fillStyle = C.yellow; ctx.fillRect(0, sy + sh, W, 74)
+    ctx.fillStyle = C.ink; ctx.font = '700 26px Barlow'; spaced(ctx, 'STICKER CODE', 48, sy + sh + 48, 2)
+    ctx.font = '700 58px Barlow'; spaced(ctx, tag, W - 48, sy + sh + 56, 4, 'right')
 
     // footer
-    centerText(ctx, SITE, H - 12, '600 22px Barlow', C.soft)
+    centerText(ctx, SITE, H - 10, '600 22px Barlow', C.soft)
     return canvas
   }
 
@@ -166,8 +215,8 @@
     hazard(ctx, 0, 0, W, 34, 34)
     brand(ctx, 56, 170, 96, true)
 
-    ctx.fillStyle = C.text; ctx.font = '900 70px Stencil'
-    ctx.fillText('THIS CAR IS', 56, 290); ctx.fillText('ON GAADIPASS', 56, 362)
+    ctx.fillStyle = C.text; ctx.font = '700 66px Barlow'
+    ctx.fillText('This car is', 56, 290); ctx.fillText('on GaadiPass', 56, 362)
 
     ctx.font = '500 34px Barlow'; ctx.fillStyle = C.text
     let y = 440
@@ -188,7 +237,7 @@
     const cy = H - 236
     ctx.fillStyle = C.paint; ctx.fillRect(40, cy, W - 80, 132)
     ctx.fillStyle = C.soft; ctx.font = '700 26px Barlow'; ctx.fillText('YOUR STICKER CODE', 72, cy + 48)
-    ctx.fillStyle = C.ink; ctx.font = '900 66px Stencil'; ctx.fillText(tag, 72, cy + 112)
+    ctx.fillStyle = C.ink; ctx.font = '700 62px Barlow'; spaced(ctx, tag, 72, cy + 110, 4)
 
     ctx.fillStyle = C.dim; ctx.font = '600 22px Barlow'; ctx.fillText('Mission Invictus · Bengaluru', 56, H - 60)
     hazard(ctx, 0, H - 34, W, 34, 34)
