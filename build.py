@@ -179,6 +179,7 @@ page("order.html", "Order", f"""
       <a class="app" id="payPaytm" href="#"><span class="dot" style="background:#00baf2"></span>Paytm</a>
       <a class="app" id="payBtn" href="#"><span class="dot" style="background:#facc15"></span>Other UPI app</a>
     </div>
+    <p class="muted" id="iosHint" hidden>On iPhone: if your app isn't listed, tap <b>Copy</b> above and pay to the UPI ID in your app.</p>
     <p class="muted">On a computer? Scan this QR with any UPI app:</p>
     <div id="qr" class="qr"></div>
   </div>

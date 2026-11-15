@@ -37,7 +37,11 @@
       const q = link.split('?')[1]
       $('payBtn').href = link
       $('payPhonePe').href = 'phonepe://pay?' + q
-      $('payGPay').href = 'tez://upi/pay?' + q
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+      $('payGPay').href = (isIOS ? 'gpay://upi/pay?' : 'tez://upi/pay?') + q
+      // iPhone has no UPI app chooser: hide the generic button there, show a hint instead
+      $('payBtn').hidden = isIOS
+      $('iosHint').hidden = !isIOS
       $('payPaytm').href = 'paytmmp://pay?' + q
       $('qr').innerHTML = ''
       if (window.QRCode) new window.QRCode($('qr'), { text: link, width: 200, height: 200 })
