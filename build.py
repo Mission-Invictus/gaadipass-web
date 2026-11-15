@@ -56,7 +56,7 @@ page("index.html", "Aapki gaadi ka digital passport", f"""
   <li>Your phone rings — both numbers stay hidden.</li>
 </ol>
 <div class="price" id="price">
-  <div class="tag">Pre-order · Launch offer</div>
+  <div class="tag">Launch offer</div>
   <div class="amt">₹399</div>
   <div>for <b>2 GaadiPass stickers</b> · inclusive of all taxes</div>
   <ul>
@@ -64,8 +64,8 @@ page("index.html", "Aapki gaadi ka digital passport", f"""
     <li>Masked calling &amp; alerts to your number — no monthly fee</li>
     <li>Free delivery in Bengaluru · pan-India delivery available</li>
   </ul>
-  <a class="btn" href="mailto:{EMAIL}?subject=GaadiPass%20pre-order">Pre-order now</a>
-  <p class="muted">Pre-orders open in Bengaluru — the first batch ships in about 2–3 weeks. Payment by UPI or online payment. Full refund if you cancel before dispatch.</p>
+  <a class="btn" href="mailto:{EMAIL}?subject=GaadiPass%20order">Order now</a>
+  <p class="muted">Now taking orders in Bengaluru. Payment by UPI or online payment. Full refund if you cancel before dispatch.</p>
 </div>
 <h2>FAQ</h2>
 <p><b>Will people see my phone number?</b> No. Calls go through a masked number; neither side sees the other's number.</p>
@@ -117,7 +117,7 @@ page("shipping.html", "Shipping Policy", f"""
 <h1>Shipping Policy</h1><p class="muted">Last updated: {UPDATED}</p>
 <table>
   <tr><th>Area</th><th>Dispatch</th><th>Delivery time</th><th>Charge</th></tr>
-  <tr><td>Bengaluru</td><td>Within 1–2 working days (pre-orders: when the batch is ready, ~2–3 weeks)</td><td>1–3 working days</td><td>Free</td></tr>
+  <tr><td>Bengaluru</td><td>Within 1–2 working days</td><td>1–3 working days</td><td>Free</td></tr>
   <tr><td>Rest of India</td><td>Within 1–2 working days</td><td>3–7 working days</td><td>Included in price</td></tr>
 </table>
 <p>Orders are shipped by courier or India Post to the address given when ordering. You will receive tracking details by WhatsApp, SMS or email once dispatched.</p>
