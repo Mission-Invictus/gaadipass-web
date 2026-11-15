@@ -8,6 +8,7 @@
 
   let cfg = { pricePerPack: 399, stickersPerPack: 2, currency: 'INR', upiId: null, payeeName: 'Mission Invictus' }
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  const isPhone = isIOS || /Android/i.test(navigator.userAgent)
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
@@ -163,13 +164,21 @@
       const link = `upi://pay?pa=${encodeURIComponent(cfg.upiId)}&pn=${encodeURIComponent(cfg.payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('GaadiPass order')}`
       const q = link.split('?')[1]
       $('upiId').textContent = cfg.upiId
-      $('payBtn').href = link
-      $('payPhonePe').href = 'phonepe://pay?' + q
-      $('payGPay').href = (isIOS ? 'gpay://upi/pay?' : 'tez://upi/pay?') + q
-      $('payPaytm').href = 'paytmmp://pay?' + q
-      // iPhone has no UPI app chooser: hide the generic button there, show a hint instead
-      $('payBtn').hidden = isIOS
+      payLinks = {
+        phonepe: 'phonepe://pay?' + q,
+        gpay: (isIOS ? 'gpay://upi/pay?' : 'tez://upi/pay?') + q,
+        paytm: 'paytmmp://pay?' + q,
+        other: link
+      }
+      $('payNowAmt').textContent = rupees(amount)
+      // iPhone has no UPI app chooser: hide "Any UPI app" there, show a hint instead
+      $('pickOther').hidden = isIOS
+      if (isIOS && pickedApp() === 'other') document.querySelector('input[name="app"][value="phonepe"]').checked = true
+      renderPayButton()
       $('iosHint').hidden = !isIOS
+      // phones pay through the app, then the upload button appears; computers pay by QR, so show it straight away
+      $('paidBox').hidden = isPhone
+      $('payWait').hidden = true
       $('qr').innerHTML = ''
       if (window.QRCode) new window.QRCode($('qr'), { text: link, width: 200, height: 200 })
       $('qrBox').hidden = !window.QRCode
@@ -180,8 +189,56 @@
       $('payBox').hidden = true
       $('noUpi').hidden = false
     }
-    $('paid').hidden = !cfg.upiId
+    if (!cfg.upiId) $('paidBox').hidden = true
   }
+
+  // ---------- step 2: choose app → Pay → wait → upload ----------
+  let payLinks = {}
+  let waitTimer = null
+  let leftForApp = false
+  const APP_NAME = { phonepe: 'PhonePe', gpay: 'Google Pay', paytm: 'Paytm', other: 'your UPI app' }
+  const pickedApp = () => { const r = document.querySelector('input[name="app"]:checked'); return r ? r.value : 'phonepe' }
+  function renderPayButton () {
+    const app = pickedApp()
+    $('payNowApp').textContent = app === 'other' ? 'with any UPI app' : 'with ' + APP_NAME[app]
+  }
+  $$('input[name="app"]').forEach((r) => r.addEventListener('change', renderPayButton))
+
+  function endWait () {
+    clearTimeout(waitTimer)
+    waitTimer = null
+    if ($('payWait').hidden) return
+    $('payWait').hidden = true
+    $('payNow').disabled = false
+    $('paidBox').hidden = false
+    $('stepStatus').textContent = 'Payment done? Upload the screenshot.'
+    $('paidBox').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
+  }
+
+  $('payNow').addEventListener('click', () => {
+    const app = pickedApp()
+    const href = payLinks[app]
+    if (!href) return
+    $('waitTitle').textContent = 'Opening ' + APP_NAME[app] + '…'
+    $('waitText').textContent = 'Complete the payment of ' + $('payAmount').textContent + ' in the app, then come back here.'
+    $('payWait').hidden = false
+    $('paidBox').hidden = true
+    $('payNow').disabled = true
+    leftForApp = false
+    window.location.href = href
+    // the screenshot step appears after a few seconds, or as soon as the customer returns from the app
+    clearTimeout(waitTimer)
+    waitTimer = setTimeout(endWait, 4500)
+  })
+  document.addEventListener('visibilitychange', () => {
+    if ($('payWait').hidden) return
+    if (document.hidden) { leftForApp = true; clearTimeout(waitTimer); return }
+    if (leftForApp) setTimeout(endWait, 700)
+  })
+  $('payAgain').addEventListener('click', () => {
+    $('paidBox').hidden = true
+    $('payNow').focus()
+  })
 
   // ---------- copy ----------
   function copyText (text, btn, label, said) {

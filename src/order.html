@@ -99,18 +99,23 @@
       </div>
 
       <div id="payBox">
-        <ol class="howto">
-          <li>Tap your UPI app below. The amount is filled in for you.</li>
-          <li>Pay, then take a screenshot of the success screen.</li>
-          <li>Come back here and upload it.</li>
-        </ol>
-
         <div class="pay-layout">
-          <div class="apps" role="group" aria-label="Pay with a UPI app">
-            <a class="app" id="payPhonePe" href="#"><span class="mark mark-phonepe" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>PhonePe</b><span class="app-sub">Opens with amount</span></span></a>
-            <a class="app" id="payGPay" href="#"><span class="mark mark-gpay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Google Pay</b><span class="app-sub">Opens with amount</span></span></a>
-            <a class="app" id="payPaytm" href="#"><span class="mark mark-paytm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Paytm</b><span class="app-sub">Opens with amount</span></span></a>
-            <a class="app" id="payBtn" href="#"><span class="mark mark-upi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Other UPI app</b><span class="app-sub">Choose any app</span></span></a>
+          <div class="pay-pick">
+            <fieldset class="apps-pick" id="appsPick">
+              <legend class="pick-legend">Choose your UPI app</legend>
+              <label class="pick"><input type="radio" name="app" value="phonepe" checked><span class="pick-logo"><img src="/assets/pay/phonepe.svg" alt="PhonePe" width="120" height="32"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+              <label class="pick"><input type="radio" name="app" value="gpay"><span class="pick-logo"><img src="/assets/pay/gpay.svg" alt="Google Pay" width="90" height="34"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+              <label class="pick"><input type="radio" name="app" value="paytm"><span class="pick-logo"><img src="/assets/pay/paytm.svg" alt="Paytm" width="100" height="32"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+              <label class="pick" id="pickOther"><input type="radio" name="app" value="other"><span class="pick-logo pick-logo-upi"><img src="/assets/pay/upi.svg" alt="" width="64" height="24"><span>Any UPI app</span></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+            </fieldset>
+
+            <button class="btn btn-pay" type="button" id="payNow">Pay <span class="num" id="payNowAmt">₹399</span> <span id="payNowApp">with PhonePe</span></button>
+            <p class="pay-note">The app opens with the amount filled in. Nothing is charged until you approve it in the app.</p>
+
+            <div class="pay-wait" id="payWait" hidden>
+              <span class="spinner" aria-hidden="true"></span>
+              <p role="status" aria-live="polite"><b id="waitTitle">Opening PhonePe…</b><span id="waitText">Complete the payment in the app, then come back here.</span></p>
+            </div>
           </div>
 
           <details class="qr-box" id="qrBox">
@@ -130,10 +135,14 @@
         </div>
       </div>
 
-      <p id="noUpi" class="no-upi" hidden>UPI payments open shortly. Please message us on WhatsApp <a href="https://wa.me/{{WA}}">{{PHONE}}</a> to complete your order.</p>
+      <p id="noUpi" class="no-upi" hidden>UPI payments open shortly. Please message us on WhatsApp <a href="https://wa.me/{{WA}}">WhatsApp us</a> to complete your order.</p>
 
-      <div class="actions">
-        <button class="btn btn-go" type="button" id="paid">I've paid, upload screenshot</button>
+      <div class="paid-box" id="paidBox" hidden>
+        <p class="paid-q"><b>Payment done?</b> Take a screenshot of the success screen in your UPI app, then upload it here.</p>
+        <div class="actions">
+          <button class="btn btn-go" type="button" id="paid">Upload payment screenshot</button>
+          <button type="button" class="link" id="payAgain">Payment didn't go through? Try again</button>
+        </div>
       </div>
     </section>
 
@@ -195,7 +204,7 @@
         <li><span><b>We print your stickers</b> with your own QR code and tag code.</span></li>
         <li><span><b>Delivered in 1–3 working days</b> in Bengaluru, free.</span></li>
       </ol>
-      <p class="done-help">Questions about your order? <a id="doneWa" href="https://wa.me/{{WA}}">WhatsApp us on <span class="nowrap">{{PHONE}}</span></a></p>
+      <p class="done-help">Questions about your order? <a id="doneWa" href="https://wa.me/{{WA}}">WhatsApp us</a></p>
     </section>
   </div>
 

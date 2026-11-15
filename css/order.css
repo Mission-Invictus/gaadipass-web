@@ -218,3 +218,33 @@
 .sum-sub{font-size:1.15rem;margin:0 0 var(--s2)}
 .pillar .sum-addr p{margin:0;font-size:.95rem;white-space:pre-line}
 .pillar .sum-edit{color:var(--ink);padding-left:0;margin-top:var(--s1)}
+
+/* ---------- pay: pick an app → Pay → wait → upload ---------- */
+.pay-pick{display:grid;gap:var(--s4)}
+.apps-pick{border:0;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s3)}
+.pick-legend{padding:0;margin-bottom:var(--s3);font:700 .8rem/1 var(--font-body);letter-spacing:.07em;text-transform:uppercase;color:var(--text-dim)}
+.pick{position:relative;display:flex;align-items:center;justify-content:center;min-height:76px;padding:var(--s3) var(--s4);background:var(--paint);cursor:pointer;box-shadow:var(--floor-shadow);transition:box-shadow .15s}
+.pick input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.pick-logo{display:flex;align-items:center;justify-content:center;gap:var(--s2);pointer-events:none}
+.pick-logo img{display:block;height:30px;width:auto;max-width:100%}
+.pick-logo-upi img{height:22px}
+.pick-logo-upi span{font:700 .95rem/1.1 var(--font-body);color:var(--ink)}
+.pick-check{position:absolute;top:6px;right:6px;width:22px;height:22px;display:none;place-items:center;background:var(--yellow)}
+.pick-check svg{width:16px;height:16px;fill:none;stroke:var(--ink);stroke-width:3}
+.pick:hover{box-shadow:inset 0 0 0 2px var(--concrete-500),var(--floor-shadow)}
+.pick:has(input:checked){box-shadow:inset 0 0 0 4px var(--yellow),var(--floor-shadow)}
+.pick:has(input:checked) .pick-check{display:grid}
+.pick:has(input:focus-visible){outline:3px solid var(--yellow);outline-offset:3px}
+.btn-pay{width:100%;min-height:60px;font-size:1.5rem}
+.btn-pay #payNowApp{font-size:1.05rem;letter-spacing:.03em}
+.pay-note{margin:0;color:var(--text-dim);font-size:.92rem}
+.pay-wait{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s5);background:var(--concrete-900);box-shadow:inset 0 0 0 2px var(--yellow)}
+.pay-wait p{margin:0;display:grid;gap:2px}
+.pay-wait b{font:900 1.35rem/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.03em}
+.pay-wait span{color:var(--text-dim)}
+.spinner{flex:none;width:34px;height:34px;border:4px solid var(--concrete-600);border-top-color:var(--yellow);border-radius:50%;animation:gp-spin .8s linear infinite}
+@keyframes gp-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none;border-top-color:var(--yellow);border-right-color:var(--yellow)}}
+.paid-box{margin-top:var(--s5);padding:var(--s5);background:var(--concrete-700)}
+.paid-box .paid-q{margin:0 0 var(--s4)}
+.paid-box .actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}

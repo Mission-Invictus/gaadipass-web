@@ -1,0 +1,6 @@
+Payment app logos (PhonePe, Google Pay, Paytm, UPI) downloaded 2026-11-15 from Wikimedia Commons:
+- phonepe.svg  https://commons.wikimedia.org/wiki/File:PhonePe_Logo.svg
+- gpay.svg     https://commons.wikimedia.org/wiki/File:Google_Pay_Logo.svg
+- paytm.svg    https://commons.wikimedia.org/wiki/File:Paytm_Logo_(standalone).svg
+- upi.svg      https://commons.wikimedia.org/wiki/File:UPI-Logo-vector.svg
+Trademarks of their owners; used only to show which payment apps the order page opens.

@@ -55,8 +55,8 @@ FOOT = """<footer class="site-foot">
       <a href="/">Home</a><a href="/order.html">Order</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a>
       <a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a>
     </nav>
-    <p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. {{UDYAM}}</p>
-    <p><a href="mailto:{{EMAIL}}">{{EMAIL}}</a> · <a href="tel:{{PHONE_TEL}}">{{PHONE}}</a></p>
+    <p>© 2026 Mission Invictus · Bengaluru, Karnataka, India · Udyam Reg. No. {{UDYAM}}</p>
+    <p><a href="mailto:{{EMAIL}}">{{EMAIL}}</a> · <a href="https://wa.me/{{WA}}">WhatsApp us</a> · <a href="tel:{{PHONE_TEL}}">Call us</a></p>
   </div>
 </footer>"""
 
