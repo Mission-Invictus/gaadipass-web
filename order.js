@@ -144,6 +144,7 @@
     renderPay()
     renderAddress()
     show('step2')
+    window.gpTrack && gpTrack('InitiateCheckout', { currency: 'INR' })
   })
 
   function renderAddress () {
@@ -225,6 +226,7 @@
     $('paidBox').hidden = true
     $('payNow').disabled = true
     leftForApp = false
+    window.gpTrack && gpTrack('AddPaymentInfo', { currency: 'INR' })
     window.location.href = href
     // the screenshot step appears after a few seconds, or as soon as the customer returns from the app
     clearTimeout(waitTimer)
@@ -350,6 +352,7 @@
 
   // ---------- done ----------
   function renderDone (o) {
+    window.gpTrack && gpTrack('Purchase', { value: Number(o.amount) || 0, currency: 'INR' })
     $('orderNo').textContent = o.orderNo
     $('doneAmount').textContent = rupees(o.amount)
     const wa = $('doneWa')

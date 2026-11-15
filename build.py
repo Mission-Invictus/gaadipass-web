@@ -19,10 +19,10 @@ VALUES = {
 
 # name: (title, description, extra css files, scripts html, extra head)
 PAGES = {
-    "index": ("GaadiPass — Aapki gaadi ka digital passport",
-              "A smart windshield sticker: anyone can reach you when your car needs attention, without seeing your phone number. Works even without a smartphone. ₹399 for 2.",
+    "index": ("GaadiPass — Car parking QR sticker | Reach the owner, number hidden",
+              "Windshield QR sticker for your car. Anyone who needs it moved scans it and we reach you. Your number stays hidden. ₹399 for 2, Bengaluru delivery.",
               ["css/home.css"], '<script src="/js/home.js" defer></script>', ""),
-    "order": ("Order — GaadiPass", "Order GaadiPass stickers and pay by UPI.",
+    "order": ("Order — GaadiPass", "Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI with PhonePe, Google Pay or Paytm. Delivered in Bengaluru.",
               ["css/order.css"],
               '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script><script src="/order.js" defer></script>', ""),
     "terms": ("Terms & Conditions — GaadiPass", "GaadiPass terms and conditions.", ["css/pages.css"], "", ""),
@@ -63,6 +63,30 @@ FOOT = """<footer class="site-foot">
 </footer>"""
 
 
+SITE = "gaadipass.missioninvictus.com"
+# Meta Pixel: paste the Pixel ID from Events Manager here and rebuild. Empty = no pixel loads.
+META_PIXEL_ID = ""
+
+JSONLD = """<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Organization","@id":"https://gaadipass.missioninvictus.com/#org","name":"GaadiPass","url":"https://gaadipass.missioninvictus.com/","logo":"https://gaadipass.missioninvictus.com/assets/icon-512.png","parentOrganization":{"@type":"Organization","name":"Mission Invictus","url":"https://www.missioninvictus.com/"}},
+ {"@type":"WebSite","name":"GaadiPass","url":"https://gaadipass.missioninvictus.com/"},
+ {"@type":"Product","name":"GaadiPass car QR sticker (pack of 2)","image":"https://gaadipass.missioninvictus.com/assets/sticker/front-sample.png","description":"Windshield QR sticker. Anyone who needs your car moved scans it and GaadiPass reaches you without showing your phone number.","brand":{"@type":"Brand","name":"GaadiPass"},"offers":{"@type":"Offer","price":"399","priceCurrency":"INR","availability":"https://schema.org/InStock","url":"https://gaadipass.missioninvictus.com/order.html","areaServed":"Bengaluru"}}
+]}
+</script>"""
+
+
+def pixel_head(name):
+    if not META_PIXEL_ID or name in ("admin", "t"):
+        return '<script>window.gpTrack=function(){}</script>'
+    return f"""<script>
+!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','{META_PIXEL_ID}');fbq('track','PageView');
+window.gpTrack=function(ev,p){{try{{fbq('track',ev,p||{{}})}}catch(e){{}}}};
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id={META_PIXEL_ID}&ev=PageView&noscript=1"></noscript>"""
+
+
 def fill(text):
     for k, v in VALUES.items():
         text = text.replace("{{" + k + "}}", v)
@@ -85,6 +109,23 @@ def build(name, cfg):
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="theme-color" content="#24272a">
+<link rel="canonical" href="https://{SITE}/{'' if name == 'index' else name + '.html'}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GaadiPass">
+<meta property="og:locale" content="en_IN">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="https://{SITE}/{'' if name == 'index' else name + '.html'}">
+<meta property="og:image" content="https://{SITE}/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+{JSONLD if name == 'index' else ''}
+{pixel_head(name)}
 <link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 {links}

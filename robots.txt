@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gaadipass.missioninvictus.com/sitemap.xml
