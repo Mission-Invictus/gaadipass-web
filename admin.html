@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orders admin — GaadiPass</title>
+<meta name="description" content="GaadiPass — a car sticker so anyone can reach you without seeing your phone number.">
+<link rel="stylesheet" href="/style.css">
+<meta name="robots" content="noindex,nofollow">
+</head>
+<body><main class="wrap">
+<nav><a class="brand" href="/">GaadiPass</a><a href="/#how">How it works</a><a href="/#price">Price</a><a href="/contact.html">Contact</a></nav>
+
+<h1>Orders</h1>
+<section id="login"><form id="loginForm" class="form"><label>Admin key<input id="key" type="password" required autocomplete="off"></label><button class="btn" type="submit">Open</button></form></section>
+<section id="panel" hidden>
+<p><select id="filter"><option value="">All</option><option>submitted</option><option>verified</option><option>shipped</option><option>delivered</option><option>cancelled</option></select>
+<button type="button" id="refresh" class="link">Refresh</button> <span id="msg" class="muted"></span></p>
+<div class="tablewrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Address</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+<div id="shotBox" class="shotbox" hidden><img id="shot" alt="payment screenshot"><p>Tap to close</p></div>
+
+<footer><div><a href="/">Home</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a></div><p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="tel:+919795558442">+91 97955 58442</a></p></footer>
+</main><script src="/admin.js"></script></body>
+</html>

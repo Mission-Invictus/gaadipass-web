@@ -18,7 +18,7 @@ FOOT = ('<footer><div><a href="/">Home</a><a href="/terms.html">Terms</a><a href
         f'Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:{EMAIL}">{EMAIL}</a> · <a href="tel:{PHONE_TEL}">{PHONE}</a></p></footer>')
 
 
-def page(name, title, body, desc="GaadiPass — a car sticker so anyone can reach you without seeing your phone number."):
+def page(name, title, body, desc="GaadiPass — a car sticker so anyone can reach you without seeing your phone number.", extra_head="", scripts=""):
     html = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -27,12 +27,13 @@ def page(name, title, body, desc="GaadiPass — a car sticker so anyone can reac
 <title>{title} — GaadiPass</title>
 <meta name="description" content="{desc}">
 <link rel="stylesheet" href="/style.css">
+{extra_head}
 </head>
 <body><main class="wrap">
 {NAV}
 {body}
 {FOOT}
-</main></body>
+</main>{scripts}</body>
 </html>
 """
     (ROOT / name).write_text(html, encoding="utf-8")
@@ -64,7 +65,7 @@ page("index.html", "Aapki gaadi ka digital passport", f"""
     <li>Masked calling &amp; alerts to your number — no monthly fee</li>
     <li>Free delivery in Bengaluru · pan-India delivery available</li>
   </ul>
-  <a class="btn" href="mailto:{EMAIL}?subject=GaadiPass%20order">Order now</a>
+  <a class="btn" href="/order.html">Order now</a>
   <p class="muted">Now taking orders in Bengaluru. Payment by UPI or online payment. Full refund if you cancel before dispatch.</p>
 </div>
 <h2>FAQ</h2>
@@ -138,5 +139,78 @@ page("contact.html", "Contact Us", f"""
 </table>
 <p>We reply to emails within 24 hours on working days.</p>
 """)
+
+page("order.html", "Order", f"""
+<h1>Order GaadiPass</h1>
+<p class="muted">₹{399} per pack of 2 stickers · free delivery in Bengaluru · pay by UPI</p>
+
+<section id="step1">
+<div class="steps"><b>1. Details</b> → 2. Pay → 3. Upload screenshot</div>
+<form id="form1" class="form">
+  <label>Full name<input id="name" required maxlength="80" autocomplete="name"></label>
+  <label>Mobile number<input id="phone" required inputmode="tel" maxlength="14" placeholder="10-digit mobile" autocomplete="tel"></label>
+  <label>Email (optional)<input id="email" type="email" maxlength="120" autocomplete="email"></label>
+  <label>House / flat, building, street<input id="addressLine" required maxlength="300" autocomplete="street-address"></label>
+  <label>Area / locality<input id="area" maxlength="120"></label>
+  <div class="row">
+    <label>City<input id="city" required maxlength="60" value="Bengaluru" autocomplete="address-level2"></label>
+    <label>PIN code<input id="pincode" required inputmode="numeric" maxlength="6" autocomplete="postal-code"></label>
+  </div>
+  <label>Car number (optional)<input id="carNumber" maxlength="15" placeholder="KA 01 AB 1234"></label>
+  <label>How many packs?
+    <select id="packs"><option value="1">1 pack (2 stickers)</option><option value="2">2 packs (4 stickers)</option><option value="3">3 packs (6 stickers)</option><option value="4">4 packs (8 stickers)</option><option value="5">5 packs (10 stickers)</option></select>
+  </label>
+  <p class="total">Total: <b id="total">₹399</b></p>
+  <p class="error" id="err1" hidden></p>
+  <button class="btn" type="submit">Continue to payment</button>
+</form>
+</section>
+
+<section id="step2" hidden>
+<div class="steps">1. Details → <b>2. Pay</b> → 3. Upload screenshot</div>
+<div class="card">
+  <p>Pay <b id="payAmount" class="amt-sm">₹399</b> by UPI</p>
+  <div id="payBox">
+    <p>UPI ID: <b id="upiId"></b> <button type="button" id="copyUpi" class="link">Copy</button></p>
+    <a class="btn" id="payBtn" href="#">Pay with UPI app</a>
+    <p class="muted">On a computer? Scan this QR with any UPI app:</p>
+    <div id="qr" class="qr"></div>
+  </div>
+  <p id="noUpi" class="muted" hidden>UPI payments open shortly. Please contact us on WhatsApp <a href="https://wa.me/{PHONE_TEL.lstrip('+')}">{PHONE}</a> to complete your order.</p>
+</div>
+<p><button class="btn" type="button" id="paid">I've paid → upload screenshot</button> <button type="button" id="back1" class="link">← Edit details</button></p>
+</section>
+
+<section id="step3" hidden>
+<div class="steps">1. Details → 2. Pay → <b>3. Upload screenshot</b></div>
+<form id="form3" class="form">
+  <label>Payment screenshot (required)<input id="screenshot" type="file" accept="image/*" required></label>
+  <label>UPI transaction ID / UTR (optional)<input id="upiTxnId" maxlength="40" placeholder="e.g. 4321XXXXXXXX"></label>
+  <p class="error" id="err3" hidden></p>
+  <button class="btn" type="submit" id="submitBtn">Place order</button> <button type="button" id="back2" class="link">← Back to payment</button>
+</form>
+</section>
+
+<section id="done" hidden>
+<div class="card">
+  <h2>✅ Order received</h2>
+  <p>Order number: <b id="orderNo"></b> · Amount: <b id="doneAmount"></b></p>
+  <p>We'll verify your payment and confirm on your mobile/WhatsApp within a few hours. Questions? <a href="https://wa.me/{PHONE_TEL.lstrip('+')}">WhatsApp {PHONE}</a></p>
+</div>
+</section>
+""", desc="Order GaadiPass stickers — pay by UPI.",
+extra_head="",
+scripts='<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="/order.js"></script>')
+
+page("admin.html", "Orders admin", """
+<h1>Orders</h1>
+<section id="login"><form id="loginForm" class="form"><label>Admin key<input id="key" type="password" required autocomplete="off"></label><button class="btn" type="submit">Open</button></form></section>
+<section id="panel" hidden>
+<p><select id="filter"><option value="">All</option><option>submitted</option><option>verified</option><option>shipped</option><option>delivered</option><option>cancelled</option></select>
+<button type="button" id="refresh" class="link">Refresh</button> <span id="msg" class="muted"></span></p>
+<div class="tablewrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Address</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+<div id="shotBox" class="shotbox" hidden><img id="shot" alt="payment screenshot"><p>Tap to close</p></div>
+""", extra_head='<meta name="robots" content="noindex,nofollow">', scripts='<script src="/admin.js"></script>')
 
 print("built:", ", ".join(sorted(p.name for p in ROOT.glob("*.html"))))
