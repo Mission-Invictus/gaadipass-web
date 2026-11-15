@@ -67,7 +67,7 @@ SITE = "gaadipass.missioninvictus.com"
 # Meta Pixel: paste the Pixel ID from Events Manager here and rebuild. Empty = no pixel loads.
 META_PIXEL_ID = ""
 # Microsoft Clarity project ID (clarity.microsoft.com). Empty = off.
-CLARITY_ID = ""
+CLARITY_ID = "ze339saezi"
 
 JSONLD = """<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -142,7 +142,7 @@ def build(name, cfg):
 </head>
 <body class="page-{name}">
 {ADMIN_NAV if name == "admin" else NAV}
-<main id="main">
+<main id="main"{' data-clarity-mask="true"' if name in ("order", "t") else ''}>
 {src.read_text(encoding="utf-8")}
 </main>
 {FOOT}
