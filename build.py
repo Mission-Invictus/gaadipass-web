@@ -172,7 +172,13 @@ page("order.html", "Order", f"""
   <p>Pay <b id="payAmount" class="amt-sm">₹399</b> by UPI</p>
   <div id="payBox">
     <p>UPI ID: <b id="upiId"></b> <button type="button" id="copyUpi" class="link">Copy</button></p>
-    <a class="btn" id="payBtn" href="#">Pay with UPI app</a>
+    <p class="muted">Tap your UPI app — the amount is filled in for you:</p>
+    <div class="apps">
+      <a class="app" id="payPhonePe" href="#"><span class="dot" style="background:#5f259f"></span>PhonePe</a>
+      <a class="app" id="payGPay" href="#"><span class="dot" style="background:#1a73e8"></span>Google Pay</a>
+      <a class="app" id="payPaytm" href="#"><span class="dot" style="background:#00baf2"></span>Paytm</a>
+      <a class="app" id="payBtn" href="#"><span class="dot" style="background:#facc15"></span>Other UPI app</a>
+    </div>
     <p class="muted">On a computer? Scan this QR with any UPI app:</p>
     <div id="qr" class="qr"></div>
   </div>

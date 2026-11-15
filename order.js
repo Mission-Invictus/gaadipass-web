@@ -34,7 +34,11 @@
     if (cfg.upiId) {
       const link = `upi://pay?pa=${encodeURIComponent(cfg.upiId)}&pn=${encodeURIComponent(cfg.payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('GaadiPass order')}`
       $('upiId').textContent = cfg.upiId
+      const q = link.split('?')[1]
       $('payBtn').href = link
+      $('payPhonePe').href = 'phonepe://pay?' + q
+      $('payGPay').href = 'tez://upi/pay?' + q
+      $('payPaytm').href = 'paytmmp://pay?' + q
       $('qr').innerHTML = ''
       if (window.QRCode) new window.QRCode($('qr'), { text: link, width: 200, height: 200 })
       $('payBox').hidden = false
