@@ -1,96 +1,305 @@
-// GaadiPass order flow: 1) details  2) pay by UPI  3) upload payment screenshot
+// GaadiPass order flow: 1) details  2) pay by UPI  3) upload payment screenshot  -> done
 (function () {
+  'use strict'
   const API = 'https://api.missioninvictus.com/api/v1/gaadipass'
+  const MAX_FILE = 5 * 1024 * 1024
   const $ = (id) => document.getElementById(id)
-  let cfg = { pricePerPack: 399, stickersPerPack: 2, upiId: null, payeeName: 'Mission Invictus' }
+  const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel))
 
-  const show = (step) => {
-    ['step1', 'step2', 'step3', 'done'].forEach((s) => { $(s).hidden = s !== step })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  let cfg = { pricePerPack: 399, stickersPerPack: 2, currency: 'INR', upiId: null, payeeName: 'Mission Invictus' }
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
+  const rupees = (n) => '₹' + Number(n).toLocaleString('en-IN')
+  const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many)
+  const packs = () => {
+    const c = document.querySelector('input[name="packs"]:checked')
+    return c ? Number(c.value) : 1
   }
-  const total = () => Number($('packs').value || 1) * cfg.pricePerPack
-  const updateTotal = () => {
-    const p = Number($('packs').value || 1)
-    $('total').textContent = `₹${total()} · ${p * cfg.stickersPerPack} stickers`
+  const total = () => packs() * cfg.pricePerPack
+  const stickers = () => packs() * cfg.stickersPerPack
+
+  // ---------- config ----------
+  const cfgReady = (function () {
+    const ctrl = window.AbortController ? new AbortController() : null
+    const t = setTimeout(() => ctrl && ctrl.abort(), 8000)
+    return fetch(API + '/config', ctrl ? { signal: ctrl.signal } : undefined)
+      .then((r) => r.json())
+      .then((j) => { if (j && j.data && j.data.data) cfg = Object.assign({}, cfg, j.data.data) })
+      .catch(() => {})
+      .then(() => { clearTimeout(t); renderPrices() })
+  })()
+
+  // ---------- prices / summary ----------
+  function renderPrices () {
+    $$('.js-price').forEach((el) => { el.textContent = rupees(cfg.pricePerPack) })
+    $$('.js-per').forEach((el) => { el.textContent = cfg.stickersPerPack })
+    $$('.js-st').forEach((el) => { el.textContent = Number(el.dataset.packs) * cfg.stickersPerPack })
+    $$('.js-pp').forEach((el) => { el.textContent = rupees(Number(el.dataset.packs) * cfg.pricePerPack) })
+    renderSummary()
   }
-  const err = (id, msg) => { $(id).textContent = msg || ''; $(id).hidden = !msg }
+  function renderSummary () {
+    const p = packs(); const s = stickers(); const t = rupees(total())
+    $('sumPacks').textContent = p
+    $('sumStickers').textContent = s
+    $('sumTotal').textContent = t
+    $('artCount').textContent = '×' + s
+    $('inlineTotal').textContent = t
+    $('inlineStickers').textContent = plural(s, 'sticker', 'stickers')
+    $('btnTotal').textContent = t
+  }
+  $$('input[name="packs"]').forEach((r) => r.addEventListener('change', renderSummary))
 
-  fetch(API + '/config').then((r) => r.json()).then((j) => {
-    if (j && j.data && j.data.data) cfg = { ...cfg, ...j.data.data }
-    updateTotal()
-  }).catch(() => updateTotal())
+  // ---------- steps ----------
+  const STEPS = ['step1', 'step2', 'step3', 'done']
+  const STEP_STATUS = {
+    step1: 'Step 1 of 3: your details',
+    step2: 'Step 2 of 3: pay by UPI',
+    step3: 'Step 3 of 3: upload payment screenshot',
+    done: 'Order received'
+  }
+  function show (step) {
+    STEPS.forEach((s) => { $(s).hidden = s !== step })
+    const idx = STEPS.indexOf(step)
+    $$('.bay').forEach((b, i) => {
+      const current = b.dataset.step === step
+      if (current) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current')
+      b.classList.toggle('is-done', i < idx)
+      b.querySelector('.bay-state').textContent = i < idx ? ', done' : ''
+    })
+    $('stepStatus').textContent = STEP_STATUS[step]
+    const top = $('orderTop')
+    if (top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    $('h-' + step).focus({ preventScroll: true })
+  }
 
-  $('packs').addEventListener('change', updateTotal)
+  // ---------- field validation ----------
+  const cleanPhone = (v) => {
+    let p = v.replace(/[\s\-().]/g, '')
+    if (/^0[6-9]\d{9}$/.test(p)) p = p.slice(1)
+    if (/^91[6-9]\d{9}$/.test(p)) p = '+' + p
+    return p
+  }
+  const RULES = {
+    name: (v) => (v.length >= 2 ? '' : 'Enter your full name.'),
+    phone: (v) => {
+      if (!v) return 'Enter your mobile number.'
+      return /^(\+91)?[6-9]\d{9}$/.test(cleanPhone(v)) ? '' : 'Enter a valid 10-digit mobile number, like 98765 43210.'
+    },
+    email: (v) => (!v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? '' : 'This email looks incomplete. Fix it or leave it empty.'),
+    addressLine: (v) => (v.length >= 3 ? '' : 'Enter your house / flat number, building and street.'),
+    city: (v) => (v ? '' : 'Enter your city.'),
+    pincode: (v) => {
+      if (!v) return 'Enter your PIN code.'
+      return /^\d{6}$/.test(v) ? '' : 'Enter a valid 6-digit PIN code, like 560102.'
+    }
+  }
+  function setFieldError (id, msg) {
+    const input = $(id); const e = $(id + '-err')
+    if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid')
+    if (e) { e.textContent = msg; e.hidden = !msg }
+  }
+  function checkField (id) {
+    const msg = RULES[id]($(id).value.trim())
+    setFieldError(id, msg)
+    return msg
+  }
+  Object.keys(RULES).forEach((id) => {
+    const input = $(id)
+    // clear an error as soon as it is fixed; check a filled field when the user leaves it
+    input.addEventListener('input', () => { if (input.getAttribute('aria-invalid') === 'true') checkField(id) })
+    input.addEventListener('blur', () => { if (input.value.trim()) checkField(id) })
+  })
+  $('pincode').addEventListener('input', (e) => {
+    const v = e.target.value.replace(/\D/g, '').slice(0, 6)
+    if (v !== e.target.value) e.target.value = v
+  })
+  $('carNumber').addEventListener('input', (e) => {
+    const el = e.target; const pos = el.selectionStart
+    el.value = el.value.toUpperCase()
+    try { el.setSelectionRange(pos, pos) } catch (_) {}
+  })
 
-  // Step 1 → 2
-  $('form1').addEventListener('submit', (e) => {
+  const LABELS = { name: 'Full name', phone: 'Mobile number', email: 'Email', addressLine: 'Address', city: 'City', pincode: 'PIN code' }
+  function alertBox (id, msg) { $(id).textContent = msg || ''; $(id).hidden = !msg }
+
+  // ---------- step 1 -> 2 ----------
+  $('form1').addEventListener('submit', async (e) => {
     e.preventDefault()
-    const phone = $('phone').value.replace(/\s|-/g, '')
-    if (!/^(\+91)?[6-9]\d{9}$/.test(phone)) return err('err1', 'Enter a valid 10-digit mobile number')
-    if (!/^\d{6}$/.test($('pincode').value.trim())) return err('err1', 'Enter a valid 6-digit PIN code')
-    err('err1', '')
+    const bad = Object.keys(RULES).filter((id) => checkField(id))
+    if (bad.length) {
+      alertBox('err1', bad.length === 1
+        ? 'Please check ' + LABELS[bad[0]] + '.'
+        : 'Please check ' + bad.length + ' fields: ' + bad.map((id) => LABELS[id]).join(', ') + '.')
+      $(bad[0]).focus()
+      return
+    }
+    alertBox('err1', '')
+    const btn = $('toPay')
+    btn.disabled = true
+    await cfgReady
+    btn.disabled = false
+    renderPay()
+    renderAddress()
+    show('step2')
+  })
+
+  function renderAddress () {
+    const v = (id) => $(id).value.trim()
+    const lines = [v('name') + ' · ' + cleanPhone(v('phone')), v('addressLine')]
+    if (v('area')) lines.push(v('area'))
+    lines.push(v('city') + ' ' + v('pincode'))
+    $('sumAddrText').textContent = lines.join('\n')
+    $('sumAddr').hidden = false
+  }
+
+  // ---------- step 2: pay ----------
+  function renderPay () {
     const amount = total()
-    $('payAmount').textContent = `₹${amount}`
+    $('payAmount').textContent = rupees(amount)
+    $('payMeta').textContent = plural(packs(), 'pack', 'packs') + ' · ' + plural(stickers(), 'sticker', 'stickers') + ' · to ' + cfg.payeeName
     if (cfg.upiId) {
       const link = `upi://pay?pa=${encodeURIComponent(cfg.upiId)}&pn=${encodeURIComponent(cfg.payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('GaadiPass order')}`
-      $('upiId').textContent = cfg.upiId
       const q = link.split('?')[1]
+      $('upiId').textContent = cfg.upiId
       $('payBtn').href = link
       $('payPhonePe').href = 'phonepe://pay?' + q
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
       $('payGPay').href = (isIOS ? 'gpay://upi/pay?' : 'tez://upi/pay?') + q
+      $('payPaytm').href = 'paytmmp://pay?' + q
       // iPhone has no UPI app chooser: hide the generic button there, show a hint instead
       $('payBtn').hidden = isIOS
       $('iosHint').hidden = !isIOS
-      $('payPaytm').href = 'paytmmp://pay?' + q
       $('qr').innerHTML = ''
       if (window.QRCode) new window.QRCode($('qr'), { text: link, width: 200, height: 200 })
+      $('qrBox').hidden = !window.QRCode
+      if (finePointer && !isIOS) $('qrBox').open = true
       $('payBox').hidden = false
       $('noUpi').hidden = true
     } else {
       $('payBox').hidden = true
       $('noUpi').hidden = false
     }
-    show('step2')
-  })
+    $('paid').hidden = !cfg.upiId
+  }
 
-  $('copyUpi').addEventListener('click', () => {
-    navigator.clipboard && navigator.clipboard.writeText(cfg.upiId || '')
-    $('copyUpi').textContent = 'Copied ✓'
-    setTimeout(() => { $('copyUpi').textContent = 'Copy' }, 1500)
-  })
+  // ---------- copy ----------
+  function copyText (text, btn, label, said) {
+    const ok = () => {
+      btn.textContent = 'Copied'
+      $('stepStatus').textContent = said
+      setTimeout(() => { btn.textContent = label }, 1800)
+    }
+    const fallback = () => {
+      const ta = document.createElement('textarea')
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'
+      document.body.appendChild(ta); ta.select()
+      try { if (document.execCommand('copy')) ok() } catch (_) {}
+      ta.remove()
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(ok, fallback)
+    else fallback()
+  }
+  $('copyUpi').addEventListener('click', () => copyText(cfg.upiId || '', $('copyUpi'), 'Copy UPI ID', 'UPI ID copied'))
+  $('copyOrder').addEventListener('click', () => copyText($('orderNo').textContent, $('copyOrder'), 'Copy order number', 'Order number copied'))
+
   $('back1').addEventListener('click', () => show('step1'))
+  $('sumEdit').addEventListener('click', () => show('step1'))
   $('paid').addEventListener('click', () => show('step3'))
   $('back2').addEventListener('click', () => show('step2'))
 
-  // Step 3 → submit
+  // ---------- step 3: screenshot ----------
+  let chosen = null
+  let previewUrl = null
+  const fmtSize = (b) => (b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / (1024 * 1024)).toFixed(1) + ' MB')
+  function shotError (msg) {
+    setFieldError('screenshot', msg)
+    $('dropZone').classList.toggle('is-invalid', !!msg)
+  }
+  function takeFile (file) {
+    if (!file) return
+    const looksImage = file.type ? /^image\//.test(file.type) : /\.(png|jpe?g|webp|heic|heif|gif)$/i.test(file.name)
+    if (!looksImage) { chosen = null; clearPreview(); return shotError('That file is not an image. Choose the screenshot of your payment.') }
+    if (file.size > MAX_FILE) { chosen = null; clearPreview(); return shotError('This screenshot is ' + fmtSize(file.size) + '. Choose one under 5 MB, or crop it.') }
+    chosen = file
+    shotError('')
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    previewUrl = URL.createObjectURL(file)
+    const img = new Image()
+    img.alt = 'Your payment screenshot'
+    img.src = previewUrl
+    $('shotThumb').replaceChildren(img)
+    $('shotName').textContent = file.name || 'Screenshot'
+    $('shotSize').textContent = fmtSize(file.size)
+    $('shotEmpty').hidden = true
+    $('shotPreview').hidden = false
+  }
+  function clearPreview () {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    previewUrl = null
+    $('shotThumb').replaceChildren()
+    $('shotEmpty').hidden = false
+    $('shotPreview').hidden = true
+  }
+  const shot = $('screenshot')
+  shot.addEventListener('change', () => { if (shot.files && shot.files[0]) takeFile(shot.files[0]) })
+  const zone = $('dropZone')
+  ;['dragenter', 'dragover'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('is-over') }))
+  ;['dragleave', 'dragend'].forEach((ev) => zone.addEventListener(ev, () => zone.classList.remove('is-over')))
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault(); zone.classList.remove('is-over')
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]
+    if (!f) return
+    try { const dt = new DataTransfer(); dt.items.add(f); shot.files = dt.files } catch (_) {}
+    takeFile(f)
+  })
+
   $('form3').addEventListener('submit', async (e) => {
     e.preventDefault()
-    const file = $('screenshot').files[0]
-    if (!file) return err('err3', 'Please upload the payment screenshot')
-    if (file.size > 5 * 1024 * 1024) return err('err3', 'Screenshot is too large (max 5 MB)')
-    err('err3', '')
+    if (!chosen) {
+      shotError('Add the screenshot of your payment to place the order.')
+      alertBox('err3', '')
+      shot.focus()
+      return
+    }
+    alertBox('err3', '')
     const fd = new FormData()
-    for (const id of ['name', 'phone', 'email', 'addressLine', 'area', 'city', 'pincode', 'carNumber', 'packs', 'upiTxnId']) {
+    for (const id of ['name', 'email', 'addressLine', 'area', 'city', 'pincode', 'carNumber', 'upiTxnId']) {
       fd.append(id, $(id).value.trim())
     }
-    fd.set('phone', $('phone').value.replace(/\s|-/g, ''))
-    fd.append('screenshot', file)
-    $('submitBtn').disabled = true
-    $('submitBtn').textContent = 'Placing order…'
+    fd.append('phone', cleanPhone($('phone').value.trim()))
+    fd.append('packs', String(packs()))
+    fd.append('screenshot', chosen, chosen.name || 'screenshot.jpg')
+    const btn = $('submitBtn')
+    btn.disabled = true
+    btn.textContent = 'Placing order…'
+    $('form3').setAttribute('aria-busy', 'true')
     try {
-      const r = await fetch(API + '/orders', { method: 'POST', body: fd })
+      let r
+      try { r = await fetch(API + '/orders', { method: 'POST', body: fd }) } catch (_) {
+        throw new Error('Could not reach our server. Check your internet and tap Place order again.')
+      }
       const j = await r.json().catch(() => ({}))
-      if (!r.ok) throw new Error((j.data && j.data.info) || j.message || 'Something went wrong, please try again')
-      const o = j.data.data
-      $('orderNo').textContent = o.orderNo
-      $('doneAmount').textContent = `₹${o.amount}`
-      show('done')
+      if (!r.ok) throw new Error((j.data && j.data.info) || j.message || 'Something went wrong. Please try again.')
+      renderDone(j.data.data)
     } catch (ex) {
-      err('err3', ex.message)
+      alertBox('err3', ex.message)
     } finally {
-      $('submitBtn').disabled = false
-      $('submitBtn').textContent = 'Place order'
+      btn.disabled = false
+      btn.textContent = 'Place order'
+      $('form3').removeAttribute('aria-busy')
     }
   })
+
+  // ---------- done ----------
+  function renderDone (o) {
+    $('orderNo').textContent = o.orderNo
+    $('doneAmount').textContent = rupees(o.amount)
+    const wa = $('doneWa')
+    wa.href = wa.href.split('?')[0] + '?text=' + encodeURIComponent('Hi, my GaadiPass order number is ' + o.orderNo)
+    $('sumAddr').hidden = true
+    show('done')
+  }
+
+  renderSummary()
 })()

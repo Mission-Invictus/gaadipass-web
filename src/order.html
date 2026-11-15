@@ -1,0 +1,236 @@
+<div class="wrap order-head">
+  <h1>Order GaadiPass</h1>
+  <p class="order-lede"><span class="js-price">₹399</span> for <span class="js-per">2</span> stickers · free delivery in Bengaluru · pay by UPI</p>
+</div>
+
+<div class="wrap order-grid" id="orderTop">
+  <div class="order-main">
+    <ol class="lane" aria-label="Order steps">
+      <li class="bay" data-step="step1" aria-current="step"><span class="bay-no" aria-hidden="true">1</span><span class="bay-name"><span class="sr-only">Step 1: </span>Details</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
+      <li class="bay" data-step="step2"><span class="bay-no" aria-hidden="true">2</span><span class="bay-name"><span class="sr-only">Step 2: </span>Pay</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
+      <li class="bay" data-step="step3"><span class="bay-no" aria-hidden="true">3</span><span class="bay-name"><span class="sr-only">Step 3: </span>Screenshot</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
+    </ol>
+    <p class="sr-only" id="stepStatus" aria-live="polite" aria-atomic="true"></p>
+
+    <!-- STEP 1: details -->
+    <section id="step1" class="step" aria-labelledby="h-step1">
+      <h2 id="h-step1" class="step-title" tabindex="-1">Your details</h2>
+      <form id="form1" novalidate>
+        <fieldset class="group">
+          <legend class="group-title">How many packs?</legend>
+          <p class="group-hint">Each pack has <span class="js-per">2</span> stickers.</p>
+          <div class="pack-grid">
+            <label class="pack"><input type="radio" name="packs" value="1" checked><span class="pack-face"><span class="pack-n">1</span><span class="sr-only">pack,</span><span class="pack-s"><span class="js-st" data-packs="1">2</span> stickers</span><span class="pack-p js-pp" data-packs="1">₹399</span></span></label>
+            <label class="pack"><input type="radio" name="packs" value="2"><span class="pack-face"><span class="pack-n">2</span><span class="sr-only">packs,</span><span class="pack-s"><span class="js-st" data-packs="2">4</span> stickers</span><span class="pack-p js-pp" data-packs="2">₹798</span></span></label>
+            <label class="pack"><input type="radio" name="packs" value="3"><span class="pack-face"><span class="pack-n">3</span><span class="sr-only">packs,</span><span class="pack-s"><span class="js-st" data-packs="3">6</span> stickers</span><span class="pack-p js-pp" data-packs="3">₹1,197</span></span></label>
+            <label class="pack"><input type="radio" name="packs" value="4"><span class="pack-face"><span class="pack-n">4</span><span class="sr-only">packs,</span><span class="pack-s"><span class="js-st" data-packs="4">8</span> stickers</span><span class="pack-p js-pp" data-packs="4">₹1,596</span></span></label>
+            <label class="pack"><input type="radio" name="packs" value="5"><span class="pack-face"><span class="pack-n">5</span><span class="sr-only">packs,</span><span class="pack-s"><span class="js-st" data-packs="5">10</span> stickers</span><span class="pack-p js-pp" data-packs="5">₹1,995</span></span></label>
+          </div>
+          <p class="pack-total">Total <b class="num" id="inlineTotal">₹399</b> <span id="inlineStickers">2 stickers</span> · free delivery in Bengaluru</p>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend class="group-title">Contact</legend>
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" required maxlength="80" autocomplete="name" aria-describedby="name-err">
+            <p class="error" id="name-err" hidden></p>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="phone">Mobile number</label>
+              <input id="phone" name="phone" type="tel" required inputmode="tel" maxlength="16" autocomplete="tel" aria-describedby="phone-hint phone-err">
+              <span class="hint" id="phone-hint">We confirm your order on WhatsApp</span>
+              <p class="error" id="phone-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="email">Email <span class="opt">(optional)</span></label>
+              <input id="email" name="email" type="email" maxlength="120" autocomplete="email" aria-describedby="email-err">
+              <p class="error" id="email-err" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend class="group-title">Delivery address</legend>
+          <div class="field">
+            <label for="addressLine">House / flat, building, street</label>
+            <input id="addressLine" name="addressLine" required maxlength="300" autocomplete="street-address" aria-describedby="addressLine-err">
+            <p class="error" id="addressLine-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="area">Area / locality <span class="opt">(optional)</span></label>
+            <input id="area" name="area" maxlength="120" autocomplete="address-level3" placeholder="e.g. HSR Layout">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" name="city" required maxlength="60" value="Bengaluru" autocomplete="address-level2" aria-describedby="city-err">
+              <p class="error" id="city-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pincode">PIN code</label>
+              <input id="pincode" name="pincode" required inputmode="numeric" maxlength="6" autocomplete="postal-code" aria-describedby="pincode-err">
+              <p class="error" id="pincode-err" hidden></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="carNumber">Car number <span class="opt">(optional)</span></label>
+            <input id="carNumber" name="carNumber" maxlength="15" autocapitalize="characters" autocomplete="off" placeholder="e.g. KA 01 AB 1234">
+          </div>
+        </fieldset>
+
+        <p class="form-alert" id="err1" role="alert" hidden></p>
+        <div class="actions">
+          <button class="btn btn-go" type="submit" id="toPay">Continue to pay <span class="num" id="btnTotal">₹399</span></button>
+        </div>
+      </form>
+    </section>
+
+    <!-- STEP 2: pay -->
+    <section id="step2" class="step" aria-labelledby="h-step2" hidden>
+      <button type="button" class="back" id="back1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Edit details</button>
+      <h2 id="h-step2" class="step-title" tabindex="-1">Pay by UPI</h2>
+
+      <div class="amount pillar">
+        <p class="amount-label">Amount to pay</p>
+        <p class="amount-big num" id="payAmount">₹399</p>
+        <p class="amount-meta" id="payMeta">1 pack · 2 stickers · to Mission Invictus</p>
+      </div>
+
+      <div id="payBox">
+        <ol class="howto">
+          <li>Tap your UPI app below. The amount is filled in for you.</li>
+          <li>Pay, then take a screenshot of the success screen.</li>
+          <li>Come back here and upload it.</li>
+        </ol>
+
+        <div class="pay-layout">
+          <div class="apps" role="group" aria-label="Pay with a UPI app">
+            <a class="app" id="payPhonePe" href="#"><span class="mark mark-phonepe" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>PhonePe</b><span class="app-sub">Opens with amount</span></span></a>
+            <a class="app" id="payGPay" href="#"><span class="mark mark-gpay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Google Pay</b><span class="app-sub">Opens with amount</span></span></a>
+            <a class="app" id="payPaytm" href="#"><span class="mark mark-paytm" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Paytm</b><span class="app-sub">Opens with amount</span></span></a>
+            <a class="app" id="payBtn" href="#"><span class="mark mark-upi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8M13 8.5l3.5 3.5-3.5 3.5"/></svg></span><span class="app-txt"><b>Other UPI app</b><span class="app-sub">Choose any app</span></span></a>
+          </div>
+
+          <details class="qr-box" id="qrBox">
+            <summary>On a computer? Scan the QR code</summary>
+            <div class="qr-in">
+              <div id="qr" class="qr" role="img" aria-label="UPI QR code with the amount filled in"></div>
+              <p>Scan with any UPI app on your phone.</p>
+            </div>
+          </details>
+        </div>
+
+        <p class="ios-hint" id="iosHint" hidden>On iPhone: if your app is not listed, tap <b>Copy UPI ID</b> and pay that ID from your UPI app.</p>
+
+        <div class="upi-row">
+          <p>UPI ID <b id="upiId" class="upi-id">missioninvictus@axl</b></p>
+          <button type="button" id="copyUpi" class="btn btn-ghost btn-sm">Copy UPI ID</button>
+        </div>
+      </div>
+
+      <p id="noUpi" class="no-upi" hidden>UPI payments open shortly. Please message us on WhatsApp <a href="https://wa.me/{{WA}}">{{PHONE}}</a> to complete your order.</p>
+
+      <div class="actions">
+        <button class="btn btn-go" type="button" id="paid">I've paid, upload screenshot</button>
+      </div>
+    </section>
+
+    <!-- STEP 3: screenshot -->
+    <section id="step3" class="step" aria-labelledby="h-step3" hidden>
+      <button type="button" class="back" id="back2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back to payment</button>
+      <h2 id="h-step3" class="step-title" tabindex="-1">Upload payment screenshot</h2>
+      <form id="form3" novalidate>
+        <div class="field">
+          <span class="label" id="shot-label">Payment screenshot</span>
+          <label class="drop" id="dropZone" for="screenshot">
+            <input id="screenshot" name="screenshot" type="file" accept="image/*" class="drop-input" aria-labelledby="shot-label" aria-describedby="shot-hint screenshot-err">
+            <span class="drop-empty" id="shotEmpty">
+              <svg class="drop-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="5" width="30" height="38"/><path d="M24 31V15M17 21.5l7-7 7 7M16 37h16"/></svg>
+              <span class="drop-cta">Choose screenshot</span>
+              <span class="drop-sub" id="shot-hint">The success screen from your UPI app. Image, up to 5 MB.</span>
+            </span>
+            <span class="drop-chosen" id="shotPreview" hidden>
+              <span class="drop-thumb" id="shotThumb"></span>
+              <span class="drop-file">
+                <b id="shotName" class="drop-name"></b>
+                <span id="shotSize" class="num"></span>
+                <span class="drop-change">Choose a different one</span>
+              </span>
+            </span>
+          </label>
+          <p class="error" id="screenshot-err" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="upiTxnId">UPI transaction ID / UTR <span class="opt">(optional)</span></label>
+          <input id="upiTxnId" name="upiTxnId" maxlength="40" inputmode="numeric" autocomplete="off" placeholder="e.g. 4321 0987 6543" aria-describedby="utr-hint">
+          <span class="hint" id="utr-hint">The 12-digit number on the payment success screen. Helps us find your payment faster.</span>
+        </div>
+
+        <p class="reassure"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5V6z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg>We check every payment by hand and confirm on WhatsApp.</p>
+
+        <p class="form-alert" id="err3" role="alert" hidden></p>
+        <div class="actions">
+          <button class="btn btn-go" type="submit" id="submitBtn">Place order</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- DONE -->
+    <section id="done" class="step" aria-labelledby="h-done" hidden>
+      <h2 id="h-done" class="step-title" tabindex="-1">Order received</h2>
+      <div class="ticket pillar">
+        <p class="ticket-label">Your order number</p>
+        <p class="ticket-no num" id="orderNo"></p>
+        <div class="ticket-row">
+          <p>Amount <b class="num" id="doneAmount"></b></p>
+          <button type="button" class="btn btn-ghost btn-sm btn-on-paint" id="copyOrder">Copy order number</button>
+        </div>
+      </div>
+      <h3 class="next-title">What happens next</h3>
+      <ol class="next">
+        <li><span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span></li>
+        <li><span><b>We print your stickers</b> with your own QR code and tag code.</span></li>
+        <li><span><b>Delivered in 1–3 working days</b> in Bengaluru, free.</span></li>
+      </ol>
+      <p class="done-help">Questions about your order? <a id="doneWa" href="https://wa.me/{{WA}}">WhatsApp us on <span class="nowrap">{{PHONE}}</span></a></p>
+    </section>
+  </div>
+
+  <aside class="summary pillar" aria-labelledby="sum-title">
+    <h2 id="sum-title" class="sum-title">Your order</h2>
+    <div class="sum-top">
+      <svg class="sticker-art" viewBox="0 0 138 150" role="img" aria-labelledby="art-title">
+        <title id="art-title">GaadiPass windshield sticker illustration</title>
+        <g transform="rotate(-7 58 82)">
+          <rect class="a-back" x="16" y="26" width="84" height="110"/>
+          <rect class="a-ink" x="16" y="26" width="84" height="18"/>
+        </g>
+        <rect class="a-face" x="30" y="18" width="84" height="110"/>
+        <rect class="a-band" x="30" y="18" width="84" height="18"/>
+        <text x="72" y="32" text-anchor="middle" class="a-word">GAADIPASS</text>
+        <g class="a-ink" transform="translate(46.25 44) scale(2.5)"><path d="M0 0h7v1h-7zM8 0h5v1h-5zM14 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM10 1h1v1h-1zM12 1h1v1h-1zM14 1h1v1h-1zM20 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM9 2h2v1h-2zM12 2h1v1h-1zM14 2h1v1h-1zM16 2h3v1h-3zM20 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM16 3h3v1h-3zM20 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM10 4h3v1h-3zM14 4h1v1h-1zM16 4h3v1h-3zM20 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM10 5h1v1h-1zM14 5h1v1h-1zM20 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM11 6h2v1h-2zM14 6h7v1h-7zM8 7h1v1h-1zM10 7h1v1h-1zM0 8h2v1h-2zM8 8h1v1h-1zM10 8h5v1h-5zM17 8h1v1h-1zM0 9h5v1h-5zM8 9h1v1h-1zM11 9h1v1h-1zM16 9h2v1h-2zM19 9h1v1h-1zM1 10h2v1h-2zM5 10h3v1h-3zM10 10h1v1h-1zM14 10h1v1h-1zM16 10h2v1h-2zM1 11h1v1h-1zM4 11h4v1h-4zM9 11h3v1h-3zM13 11h2v1h-2zM17 11h1v1h-1zM1 12h4v1h-4zM6 12h2v1h-2zM10 12h1v1h-1zM14 12h1v1h-1zM16 12h2v1h-2zM9 13h1v1h-1zM14 13h1v1h-1zM18 13h3v1h-3zM0 14h7v1h-7zM9 14h1v1h-1zM12 14h1v1h-1zM14 14h1v1h-1zM18 14h2v1h-2zM0 15h1v1h-1zM6 15h1v1h-1zM8 15h1v1h-1zM11 15h1v1h-1zM15 15h3v1h-3zM19 15h2v1h-2zM0 16h1v1h-1zM2 16h3v1h-3zM6 16h1v1h-1zM8 16h2v1h-2zM11 16h2v1h-2zM16 16h1v1h-1zM18 16h1v1h-1zM20 16h1v1h-1zM0 17h1v1h-1zM2 17h3v1h-3zM6 17h1v1h-1zM8 17h5v1h-5zM14 17h1v1h-1zM16 17h5v1h-5zM0 18h1v1h-1zM2 18h3v1h-3zM6 18h1v1h-1zM10 18h1v1h-1zM14 18h1v1h-1zM18 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM9 19h7v1h-7zM19 19h1v1h-1zM0 20h7v1h-7zM8 20h8v1h-8z"/></g>
+        <rect class="a-ink" x="42" y="104" width="60" height="6"/>
+        <rect class="a-soft" x="52" y="114" width="40" height="4"/>
+        <rect class="a-ink" x="98" y="118" width="40" height="27"/>
+        <text x="118" y="137.5" text-anchor="middle" class="a-count" id="artCount">×2</text>
+      </svg>
+      <dl class="sum-list">
+        <div><dt>Packs</dt><dd class="num" id="sumPacks">1</dd></div>
+        <div><dt>Stickers</dt><dd class="num" id="sumStickers">2</dd></div>
+      </dl>
+    </div>
+    <div class="sum-total">
+      <span>Total</span>
+      <b class="num" id="sumTotal">₹399</b>
+    </div>
+    <p class="sum-per"><span class="js-price">₹399</span> per pack of <span class="js-per">2</span>, taxes included. Free delivery in Bengaluru.</p>
+    <div class="sum-addr" id="sumAddr" hidden>
+      <h3 class="sum-sub">Deliver to</h3>
+      <p id="sumAddrText"></p>
+      <button type="button" class="link sum-edit" id="sumEdit">Edit details</button>
+    </div>
+  </aside>
+</div>

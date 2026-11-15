@@ -4,23 +4,59 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shipping Policy — GaadiPass</title>
-<meta name="description" content="GaadiPass — a car sticker so anyone can reach you without seeing your phone number.">
-<link rel="stylesheet" href="/style.css">
+<meta name="description" content="GaadiPass delivery times and charges.">
+<meta name="theme-color" content="#24272a">
+<link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/pages.css">
 
 </head>
-<body><main class="wrap">
-<nav><a class="brand" href="/">GaadiPass</a><a href="/#how">How it works</a><a href="/#price">Price</a><a href="/contact.html">Contact</a></nav>
+<body class="page-shipping">
+<header class="wrap site-nav">
+  <a class="brand" href="/" aria-label="GaadiPass home">GAADI<b>PASS</b></a>
+  <nav class="links" aria-label="Main">
+    <a class="opt" href="/#how">How it works</a>
+    <a class="opt" href="/#price">Price</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+</header>
+<main id="main">
+<div class="wrap doc doc-short">
+  <header class="pillar plate doc-plate">
+    <h1>Shipping Policy</h1>
+    <p class="updated">Last updated: 15 November 2026</p>
+  </header>
 
-<h1>Shipping Policy</h1><p class="muted">Last updated: 15 November 2026</p>
-<table>
-  <tr><th>Area</th><th>Dispatch</th><th>Delivery time</th><th>Charge</th></tr>
-  <tr><td>Bengaluru</td><td>Within 1–2 working days</td><td>1–3 working days</td><td>Free</td></tr>
-  <tr><td>Rest of India</td><td>Within 1–2 working days</td><td>3–7 working days</td><td>Included in price</td></tr>
-</table>
-<p>Orders are shipped by courier or India Post to the address given when ordering. You will receive tracking details by WhatsApp, SMS or email once dispatched.</p>
-<p>Delays caused by courier partners, weather or incorrect addresses are outside our control; we will help track and resolve any delay. If a parcel is lost in transit, we will re-ship it free of charge.</p>
-<p>Questions: <a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a></p>
+  <div class="prose">
+    <table class="ship">
+      <caption class="sr-only">Dispatch, delivery time and charge by area</caption>
+      <thead>
+        <tr><th scope="col">Area</th><th scope="col">Dispatch</th><th scope="col">Delivery time</th><th scope="col">Charge</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Bengaluru</th><td data-label="Dispatch">Within 1–2 working days</td><td data-label="Delivery time">1–3 working days</td><td data-label="Charge">Free</td></tr>
+        <tr><th scope="row">Rest of India</th><td data-label="Dispatch">Within 1–2 working days</td><td data-label="Delivery time">3–7 working days</td><td data-label="Charge">Included in price</td></tr>
+      </tbody>
+    </table>
+    <p>Orders are shipped by courier or India Post to the address given when ordering. You will receive tracking details by WhatsApp, SMS or email once dispatched.</p>
+    <p>Delays caused by courier partners, weather or incorrect addresses are outside our control; we will help track and resolve any delay. If a parcel is lost in transit, we will re-ship it free of charge.</p>
+    <p>Questions: <a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a></p>
+  </div>
+</div>
 
-<footer><div><a href="/">Home</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a></div><p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="tel:+919795558442">+91 97955 58442</a></p></footer>
-</main></body>
+</main>
+<footer class="site-foot">
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="wrap foot-in">
+    <nav aria-label="Policies">
+      <a href="/">Home</a><a href="/order.html">Order</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a>
+      <a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a>
+    </nav>
+    <p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449</p>
+    <p><a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="tel:+919795558442">+91 97955 58442</a></p>
+  </div>
+</footer>
+
+</body>
 </html>

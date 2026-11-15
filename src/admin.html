@@ -1,0 +1,42 @@
+<div class="wrap admin">
+  <header class="admin-head">
+    <h1>Orders</h1>
+    <div class="admin-tools" id="tools" hidden>
+      <button type="button" class="tool" id="refresh">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>
+        Refresh
+      </button>
+      <button type="button" class="tool" id="logout">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>
+        Log out
+      </button>
+    </div>
+  </header>
+
+  <section id="login" class="login" aria-label="Sign in">
+    <form id="loginForm" novalidate>
+      <label class="field" for="key">Admin key
+        <input id="key" type="password" required autocomplete="off" spellcheck="false">
+      </label>
+      <p class="error" id="loginErr" role="alert" hidden></p>
+      <button class="btn" type="submit">Open orders</button>
+    </form>
+  </section>
+
+  <section id="panel" class="panel" hidden aria-label="Orders">
+    <div class="seg" id="filters" role="group" aria-label="Filter by status"></div>
+    <div class="state" id="msg" role="status" aria-live="polite"></div>
+    <ol class="orders" id="rows"></ol>
+  </section>
+</div>
+
+<div id="shotBox" class="viewer" role="dialog" aria-modal="true" aria-labelledby="shotTitle" hidden>
+  <div class="viewer-bar">
+    <p class="viewer-title" id="shotTitle">Payment screenshot</p>
+    <button type="button" class="viewer-close" id="shotClose">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      Close
+    </button>
+  </div>
+  <div class="viewer-stage" id="shotStage"></div>
+</div>

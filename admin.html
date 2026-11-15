@@ -4,22 +4,76 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Orders admin — GaadiPass</title>
-<meta name="description" content="GaadiPass — a car sticker so anyone can reach you without seeing your phone number.">
-<link rel="stylesheet" href="/style.css">
+<meta name="description" content="Admin.">
+<meta name="theme-color" content="#24272a">
+<link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/pages.css">
+<link rel="stylesheet" href="/css/admin.css">
 <meta name="robots" content="noindex,nofollow">
 </head>
-<body><main class="wrap">
-<nav><a class="brand" href="/">GaadiPass</a><a href="/#how">How it works</a><a href="/#price">Price</a><a href="/contact.html">Contact</a></nav>
+<body class="page-admin">
+<header class="wrap site-nav">
+  <a class="brand" href="/" aria-label="GaadiPass home">GAADI<b>PASS</b></a>
+  <nav class="links" aria-label="Main"><a href="/">View site</a></nav>
+</header>
+<main id="main">
+<div class="wrap admin">
+  <header class="admin-head">
+    <h1>Orders</h1>
+    <div class="admin-tools" id="tools" hidden>
+      <button type="button" class="tool" id="refresh">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>
+        Refresh
+      </button>
+      <button type="button" class="tool" id="logout">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>
+        Log out
+      </button>
+    </div>
+  </header>
 
-<h1>Orders</h1>
-<section id="login"><form id="loginForm" class="form"><label>Admin key<input id="key" type="password" required autocomplete="off"></label><button class="btn" type="submit">Open</button></form></section>
-<section id="panel" hidden>
-<p><select id="filter"><option value="">All</option><option>submitted</option><option>verified</option><option>shipped</option><option>delivered</option><option>cancelled</option></select>
-<button type="button" id="refresh" class="link">Refresh</button> <span id="msg" class="muted"></span></p>
-<div class="tablewrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Address</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
-</section>
-<div id="shotBox" class="shotbox" hidden><img id="shot" alt="payment screenshot"><p>Tap to close</p></div>
+  <section id="login" class="login" aria-label="Sign in">
+    <form id="loginForm" novalidate>
+      <label class="field" for="key">Admin key
+        <input id="key" type="password" required autocomplete="off" spellcheck="false">
+      </label>
+      <p class="error" id="loginErr" role="alert" hidden></p>
+      <button class="btn" type="submit">Open orders</button>
+    </form>
+  </section>
 
-<footer><div><a href="/">Home</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a></div><p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449 · <a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="tel:+919795558442">+91 97955 58442</a></p></footer>
-</main><script src="/admin.js"></script></body>
+  <section id="panel" class="panel" hidden aria-label="Orders">
+    <div class="seg" id="filters" role="group" aria-label="Filter by status"></div>
+    <div class="state" id="msg" role="status" aria-live="polite"></div>
+    <ol class="orders" id="rows"></ol>
+  </section>
+</div>
+
+<div id="shotBox" class="viewer" role="dialog" aria-modal="true" aria-labelledby="shotTitle" hidden>
+  <div class="viewer-bar">
+    <p class="viewer-title" id="shotTitle">Payment screenshot</p>
+    <button type="button" class="viewer-close" id="shotClose">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      Close
+    </button>
+  </div>
+  <div class="viewer-stage" id="shotStage"></div>
+</div>
+
+</main>
+<footer class="site-foot">
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="wrap foot-in">
+    <nav aria-label="Policies">
+      <a href="/">Home</a><a href="/order.html">Order</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a>
+      <a href="/refund.html">Refund &amp; Cancellation</a><a href="/shipping.html">Shipping</a><a href="/contact.html">Contact</a>
+    </nav>
+    <p>© 2026 Mission Invictus (proprietor: Ajay Singh) · Bengaluru, Karnataka, India · Udyam Reg. No. UDYAM-KR-03-0789449</p>
+    <p><a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="tel:+919795558442">+91 97955 58442</a></p>
+  </div>
+</footer>
+<script src="/admin.js" defer></script>
+</body>
 </html>
