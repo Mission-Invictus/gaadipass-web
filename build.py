@@ -66,6 +66,8 @@ FOOT = """<footer class="site-foot">
 SITE = "gaadipass.missioninvictus.com"
 # Meta Pixel: paste the Pixel ID from Events Manager here and rebuild. Empty = no pixel loads.
 META_PIXEL_ID = ""
+# Microsoft Clarity project ID (clarity.microsoft.com). Empty = off.
+CLARITY_ID = ""
 
 JSONLD = """<script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -74,6 +76,12 @@ JSONLD = """<script type="application/ld+json">
  {"@type":"Product","name":"GaadiPass car QR sticker (pack of 2)","image":"https://gaadipass.missioninvictus.com/assets/sticker/front-sample.png","description":"Windshield QR sticker. Anyone who needs your car moved scans it and GaadiPass reaches you without showing your phone number.","brand":{"@type":"Brand","name":"GaadiPass"},"offers":{"@type":"Offer","price":"399","priceCurrency":"INR","availability":"https://schema.org/InStock","url":"https://gaadipass.missioninvictus.com/order.html","areaServed":"Bengaluru"}}
 ]}
 </script>"""
+
+
+def clarity_head(name):
+    if not CLARITY_ID or name == "admin":
+        return ""
+    return f"""<script>(function(c,l,a,r,i,t,y){{c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)}})(window,document,"clarity","script","{CLARITY_ID}");</script>"""
 
 
 def pixel_head(name):
@@ -126,6 +134,7 @@ def build(name, cfg):
 <meta name="twitter:card" content="summary_large_image">
 {JSONLD if name == 'index' else ''}
 {pixel_head(name)}
+{clarity_head(name)}
 <link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 {links}
