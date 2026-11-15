@@ -65,7 +65,7 @@ FOOT = """<footer class="site-foot">
 
 SITE = "gaadipass.missioninvictus.com"
 # Meta Pixel: paste the Pixel ID from Events Manager here and rebuild. Empty = no pixel loads.
-META_PIXEL_ID = ""
+META_PIXEL_ID = "1428253429474861"
 # Microsoft Clarity project ID (clarity.microsoft.com). Empty = off.
 CLARITY_ID = "ze339saezi"
 
