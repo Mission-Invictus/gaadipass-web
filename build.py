@@ -6,6 +6,7 @@ Placeholders in bodies: {{EMAIL}} {{PHONE}} {{PHONE_TEL}} {{WA}} {{UDYAM}} {{UPD
 Run: python build.py
 """
 from pathlib import Path
+import hashlib, re
 
 ROOT = Path(__file__).parent
 VALUES = {
@@ -101,6 +102,16 @@ def fill(text):
     return text
 
 
+def bust(html):
+    """Add ?v=<content hash> to our own /css and /js files so browsers never run a stale copy."""
+    def ver(m):
+        f = ROOT / m.group(2)
+        if not f.exists():
+            return m.group(0)
+        return f'{m.group(1)}/{m.group(2)}?v={hashlib.md5(f.read_bytes()).hexdigest()[:8]}"'
+    return re.sub(r'((?:href|src)=")/((?:css|js|vendor)/[^"?]+\.(?:css|js)|[a-z]+\.js)"', ver, html)
+
+
 def build(name, cfg):
     title, desc, css, scripts, head = cfg
     src = ROOT / "src" / f"{name}.html"
@@ -150,7 +161,7 @@ def build(name, cfg):
 </body>
 </html>
 """
-    (ROOT / f"{name}.html").write_text(fill(html), encoding="utf-8")
+    (ROOT / f"{name}.html").write_text(bust(fill(html)), encoding="utf-8")
     return name
 
 
