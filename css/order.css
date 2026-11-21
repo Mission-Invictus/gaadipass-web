@@ -25,7 +25,7 @@
 
 /* ---------- step lane: painted parking bays ---------- */
 .lane{
-  list-style:none;margin:0 0 var(--s6);padding:0;display:grid;grid-template-columns:repeat(3,1fr);
+  list-style:none;margin:0 0 var(--s6);padding:0;display:grid;grid-template-columns:repeat(2,1fr);
   background:var(--concrete-900);border-top:3px solid var(--line-white);border-bottom:3px solid var(--line-white);
 }
 .bay{

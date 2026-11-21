@@ -32,7 +32,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
 <link rel="preload" href="/fonts/stencil-display.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/base.css?v=30c76861">
-<link rel="stylesheet" href="/css/order.css?v=3b5e3462">
+<link rel="stylesheet" href="/css/order.css?v=93ad5033">
 
 </head>
 <body class="page-order">
@@ -47,7 +47,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
 <main id="main" data-clarity-mask="true">
 <div class="wrap order-head">
   <h1>Order GaadiPass</h1>
-  <p class="order-lede"><span class="js-price">₹399</span> for <span class="js-per">2</span> stickers · free delivery in Bengaluru · pay by UPI</p>
+  <p class="order-lede"><span class="js-price">₹399</span> for <span class="js-per">2</span> stickers · free delivery in Bengaluru · pay by UPI, card or net banking</p>
 </div>
 
 <div class="wrap order-grid" id="orderTop">
@@ -55,7 +55,6 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
     <ol class="lane" aria-label="Order steps">
       <li class="bay" data-step="step1" aria-current="step"><span class="bay-no" aria-hidden="true">1</span><span class="bay-name"><span class="sr-only">Step 1: </span>Details</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
       <li class="bay" data-step="step2"><span class="bay-no" aria-hidden="true">2</span><span class="bay-name"><span class="sr-only">Step 2: </span>Pay</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
-      <li class="bay" data-step="step3"><span class="bay-no" aria-hidden="true">3</span><span class="bay-name"><span class="sr-only">Step 3: </span>Screenshot</span><svg class="bay-tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="sr-only bay-state"></span></li>
     </ol>
     <p class="sr-only" id="stepStatus" aria-live="polite" aria-atomic="true"></p>
 
@@ -145,107 +144,18 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
         <p class="amount-meta" id="payMeta">1 pack · 2 stickers · to Mission Invictus</p>
       </div>
 
-      <div class="rzp-box" id="rzpBox" hidden>
+      <div class="rzp-box" id="rzpBox">
         <button class="btn btn-pay" type="button" id="rzpPay">Pay <span class="num" id="rzpAmt">₹399</span> now</button>
-        <p class="pay-note">UPI, cards, net banking or wallets, secured by Razorpay. Confirmed instantly, no screenshot needed.</p>
+        <p class="pay-note">UPI (PhonePe, Google Pay, Paytm), cards, net banking or wallets, secured by Razorpay. Confirmed instantly.</p>
         <p class="form-alert" id="errPay" role="alert" hidden></p>
-        <button type="button" class="link" id="upiToggle" aria-expanded="false" aria-controls="upiManual">Or pay to our UPI ID and upload a screenshot</button>
       </div>
 
-      <div id="upiManual">
-      <div id="payBox">
-        <div class="pay-layout">
-          <div class="pay-pick">
-            <fieldset class="apps-pick" id="appsPick">
-              <legend class="pick-legend">Choose your UPI app</legend>
-              <label class="pick"><input type="radio" name="app" value="phonepe" checked><span class="pick-logo"><img src="/assets/pay/phonepe.svg" alt="PhonePe" width="120" height="32"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
-              <label class="pick"><input type="radio" name="app" value="gpay"><span class="pick-logo"><img src="/assets/pay/gpay.svg" alt="Google Pay" width="90" height="34"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
-              <label class="pick"><input type="radio" name="app" value="paytm"><span class="pick-logo"><img src="/assets/pay/paytm.svg" alt="Paytm" width="100" height="32"></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
-              <label class="pick" id="pickOther"><input type="radio" name="app" value="other"><span class="pick-logo pick-logo-upi"><img src="/assets/pay/upi.svg" alt="" width="64" height="24"><span>Any UPI app</span></span><span class="pick-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
-            </fieldset>
-
-            <button class="btn btn-pay" type="button" id="payNow">Pay <span class="num" id="payNowAmt">₹399</span> <span id="payNowApp">with PhonePe</span></button>
-            <p class="pay-note">The app opens with the amount filled in. Nothing is charged until you approve it in the app.</p>
-
-            <div class="pay-wait" id="payWait" hidden>
-              <span class="spinner" aria-hidden="true"></span>
-              <p role="status" aria-live="polite"><b id="waitTitle">Opening PhonePe…</b><span id="waitText">Complete the payment in the app, then come back here.</span></p>
-            </div>
-          </div>
-
-          <details class="qr-box" id="qrBox">
-            <summary>On a computer? Scan the QR code</summary>
-            <div class="qr-in">
-              <div id="qr" class="qr" role="img" aria-label="UPI QR code with the amount filled in"></div>
-              <p>Scan with any UPI app on your phone.</p>
-            </div>
-          </details>
-        </div>
-
-        <p class="ios-hint" id="iosHint" hidden>On iPhone: if your app is not listed, tap <b>Copy UPI ID</b> and pay that ID from your UPI app.</p>
-
-        <div class="upi-row">
-          <p>UPI ID <b id="upiId" class="upi-id">missioninvictus@axl</b></p>
-          <button type="button" id="copyUpi" class="btn btn-ghost btn-sm">Copy UPI ID</button>
-        </div>
-      </div>
-
-      <p id="noUpi" class="no-upi" hidden>UPI payments open shortly. Please message us on WhatsApp <a href="https://wa.me/919795558442">WhatsApp us</a> to complete your order.</p>
-
-      <div class="paid-box" id="paidBox" hidden>
-        <p class="paid-q"><b>Payment done?</b> Take a screenshot of the success screen in your UPI app, then upload it here.</p>
-        <div class="actions">
-          <button class="btn btn-go" type="button" id="paid">Upload payment screenshot</button>
-          <button type="button" class="link" id="payAgain">Payment didn't go through? Try again</button>
-        </div>
-      </div>
-      </div>
-    </section>
-
-    <!-- STEP 3: screenshot -->
-    <section id="step3" class="step" aria-labelledby="h-step3" hidden>
-      <button type="button" class="back" id="back2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back to payment</button>
-      <h2 id="h-step3" class="step-title" tabindex="-1">Upload payment screenshot</h2>
-      <form id="form3" novalidate>
-        <div class="field">
-          <span class="label" id="shot-label">Payment screenshot</span>
-          <label class="drop" id="dropZone" for="screenshot">
-            <input id="screenshot" name="screenshot" type="file" accept="image/*" class="drop-input" aria-labelledby="shot-label" aria-describedby="shot-hint screenshot-err">
-            <span class="drop-empty" id="shotEmpty">
-              <svg class="drop-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="5" width="30" height="38"/><path d="M24 31V15M17 21.5l7-7 7 7M16 37h16"/></svg>
-              <span class="drop-cta">Choose screenshot</span>
-              <span class="drop-sub" id="shot-hint">The success screen from your UPI app. Image, up to 5 MB.</span>
-            </span>
-            <span class="drop-chosen" id="shotPreview" hidden>
-              <span class="drop-thumb" id="shotThumb"></span>
-              <span class="drop-file">
-                <b id="shotName" class="drop-name"></b>
-                <span id="shotSize" class="num"></span>
-                <span class="drop-change">Choose a different one</span>
-              </span>
-            </span>
-          </label>
-          <p class="error" id="screenshot-err" hidden></p>
-        </div>
-
-        <div class="field">
-          <label for="upiTxnId">UPI transaction ID / UTR <span class="opt">(optional)</span></label>
-          <input id="upiTxnId" name="upiTxnId" maxlength="40" inputmode="numeric" autocomplete="off" placeholder="e.g. 4321 0987 6543" aria-describedby="utr-hint">
-          <span class="hint" id="utr-hint">The 12-digit number on the payment success screen. Helps us find your payment faster.</span>
-        </div>
-
-        <p class="reassure"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5V6z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg>We check every payment by hand and confirm on WhatsApp.</p>
-
-        <p class="form-alert" id="err3" role="alert" hidden></p>
-        <div class="actions">
-          <button class="btn btn-go" type="submit" id="submitBtn">Place order</button>
-        </div>
-      </form>
+      <p id="noPay" class="no-upi" hidden>Online payment is down for a moment. Please try again in a few minutes, or <a href="https://wa.me/919795558442">WhatsApp us</a> to complete your order.</p>
     </section>
 
     <!-- DONE -->
     <section id="done" class="step" aria-labelledby="h-done" hidden>
-      <h2 id="h-done" class="step-title" tabindex="-1">Order received</h2>
+      <h2 id="h-done" class="step-title" tabindex="-1">Order confirmed</h2>
       <div class="ticket pillar">
         <p class="ticket-label">Your order number</p>
         <p class="ticket-no num" id="orderNo"></p>
@@ -256,7 +166,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
       </div>
       <h3 class="next-title">What happens next</h3>
       <ol class="next">
-        <li id="nextPay"><span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span></li>
+        <li><span><b>Payment confirmed.</b> We message you on WhatsApp with your order details.</span></li>
         <li><span><b>We print your stickers</b> with your own QR code and tag code.</span></li>
         <li><span><b>Delivered in 1–3 working days</b> in Bengaluru, free.</span></li>
       </ol>
@@ -307,6 +217,6 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
     <p><a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="https://wa.me/919795558442">WhatsApp us</a> · <a href="tel:+919795558442">Call us</a></p>
   </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script><script src="https://api.missioninvictus.com/pay.js" defer></script><script src="/order.js?v=f3dcf78d" defer></script>
+<script src="https://api.missioninvictus.com/pay.js" defer></script><script src="/order.js?v=5dac56b8" defer></script>
 </body>
 </html>

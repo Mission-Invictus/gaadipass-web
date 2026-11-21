@@ -1,16 +1,12 @@
-// GaadiPass order flow: 1) details  2) pay (Razorpay via common pay.js, or UPI + 3) screenshot)  -> done
+// GaadiPass order flow: 1) details  2) pay with Razorpay (common pay.js from api.missioninvictus.com)  -> done
 (function () {
   'use strict'
   const API = ((window.MIPay && window.MIPay.base) || 'https://api.missioninvictus.com') + '/api/v1/gaadipass'
-  const MAX_FILE = 5 * 1024 * 1024
   const $ = (id) => document.getElementById(id)
   const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel))
 
-  let cfg = { pricePerPack: 399, stickersPerPack: 2, currency: 'INR', upiId: null, payeeName: 'Mission Invictus' }
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  const isPhone = isIOS || /Android/i.test(navigator.userAgent)
+  let cfg = { pricePerPack: 399, stickersPerPack: 2, currency: 'INR', payeeName: 'Mission Invictus', razorpay: false }
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
   const rupees = (n) => '₹' + Number(n).toLocaleString('en-IN')
   const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many)
@@ -53,12 +49,11 @@
   $$('input[name="packs"]').forEach((r) => r.addEventListener('change', renderSummary))
 
   // ---------- steps ----------
-  const STEPS = ['step1', 'step2', 'step3', 'done']
+  const STEPS = ['step1', 'step2', 'done']
   const STEP_STATUS = {
-    step1: 'Step 1 of 3: your details',
-    step2: 'Step 2 of 3: pay',
-    step3: 'Step 3 of 3: upload payment screenshot',
-    done: 'Order received'
+    step1: 'Step 1 of 2: your details',
+    step2: 'Step 2 of 2: pay',
+    done: 'Order confirmed'
   }
   function show (step) {
     STEPS.forEach((s) => { $(s).hidden = s !== step })
@@ -156,59 +151,18 @@
     $('sumAddr').hidden = false
   }
 
-  // ---------- step 2: pay ----------
+  // ---------- step 2: pay with Razorpay ----------
   function renderPay () {
     const amount = total()
     $('payAmount').textContent = rupees(amount)
     $('payMeta').textContent = plural(packs(), 'pack', 'packs') + ' · ' + plural(stickers(), 'sticker', 'stickers') + ' · to ' + cfg.payeeName
-    if (cfg.upiId) {
-      const link = `upi://pay?pa=${encodeURIComponent(cfg.upiId)}&pn=${encodeURIComponent(cfg.payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('GaadiPass order')}`
-      const q = link.split('?')[1]
-      $('upiId').textContent = cfg.upiId
-      payLinks = {
-        phonepe: 'phonepe://pay?' + q,
-        gpay: (isIOS ? 'gpay://upi/pay?' : 'tez://upi/pay?') + q,
-        paytm: 'paytmmp://pay?' + q,
-        other: link
-      }
-      $('payNowAmt').textContent = rupees(amount)
-      // iPhone has no UPI app chooser: hide "Any UPI app" there, show a hint instead
-      $('pickOther').hidden = isIOS
-      if (isIOS && pickedApp() === 'other') document.querySelector('input[name="app"][value="phonepe"]').checked = true
-      renderPayButton()
-      $('iosHint').hidden = !isIOS
-      // phones pay through the app, then the upload button appears; computers pay by QR, so show it straight away
-      $('paidBox').hidden = isPhone
-      $('payWait').hidden = true
-      $('qr').innerHTML = ''
-      if (window.QRCode) new window.QRCode($('qr'), { text: link, width: 200, height: 200 })
-      $('qrBox').hidden = !window.QRCode
-      if (finePointer && !isIOS) $('qrBox').open = true
-      $('payBox').hidden = false
-      $('noUpi').hidden = true
-    } else {
-      $('payBox').hidden = true
-      $('noUpi').hidden = false
-    }
-    if (!cfg.upiId) $('paidBox').hidden = true
-    // Razorpay first when the server has keys; the UPI + screenshot flow stays behind a toggle
-    const online = !!(cfg.razorpay && window.MIPay)
-    $('rzpBox').hidden = !online
     $('rzpAmt').textContent = rupees(amount)
     alertBox('errPay', '')
-    setUpiOpen(!online)
+    const online = !!(cfg.razorpay && window.MIPay)
+    $('rzpBox').hidden = !online
+    $('noPay').hidden = online
   }
 
-  // ---------- step 2: Razorpay (common pay.js) ----------
-  function setUpiOpen (open) {
-    $('upiManual').hidden = !open
-    $('upiToggle').setAttribute('aria-expanded', String(open))
-  }
-  $('upiToggle').addEventListener('click', () => {
-    const open = $('upiManual').hidden
-    setUpiOpen(open)
-    if (open) $('payNow').focus()
-  })
   function orderData () {
     const d = {}
     for (const id of ['name', 'email', 'addressLine', 'area', 'city', 'pincode', 'carNumber']) d[id] = $(id).value.trim()
@@ -216,6 +170,7 @@
     d.packs = packs()
     return d
   }
+
   $('rzpPay').addEventListener('click', async () => {
     const btn = $('rzpPay')
     if (btn.getAttribute('aria-busy') === 'true') return
@@ -226,64 +181,15 @@
     try {
       const paid = await window.MIPay.checkout({ product: 'gaadipass', data: orderData(), theme: '#FFC400' })
       const o = paid.result || {}
-      renderDone({ orderNo: o.orderNo || '', amount: o.amount || paid.amount }, true)
+      renderDone({ orderNo: o.orderNo || '', amount: o.amount || paid.amount })
     } catch (e) {
       alertBox('errPay', e.code === 'dismissed'
-        ? 'Payment not completed. Tap Pay to try again, or pay to our UPI ID below.'
+        ? 'Payment not completed. Tap Pay to try again.'
         : e.message || 'Something went wrong. Please try again.')
     } finally {
       btn.removeAttribute('aria-busy')
       btn.disabled = false
     }
-  })
-
-  // ---------- step 2: choose app → Pay → wait → upload ----------
-  let payLinks = {}
-  let waitTimer = null
-  let leftForApp = false
-  const APP_NAME = { phonepe: 'PhonePe', gpay: 'Google Pay', paytm: 'Paytm', other: 'your UPI app' }
-  const pickedApp = () => { const r = document.querySelector('input[name="app"]:checked'); return r ? r.value : 'phonepe' }
-  function renderPayButton () {
-    const app = pickedApp()
-    $('payNowApp').textContent = app === 'other' ? 'with any UPI app' : 'with ' + APP_NAME[app]
-  }
-  $$('input[name="app"]').forEach((r) => r.addEventListener('change', renderPayButton))
-
-  function endWait () {
-    clearTimeout(waitTimer)
-    waitTimer = null
-    if ($('payWait').hidden) return
-    $('payWait').hidden = true
-    $('payNow').disabled = false
-    $('paidBox').hidden = false
-    $('stepStatus').textContent = 'Payment done? Upload the screenshot.'
-    $('paidBox').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
-  }
-
-  $('payNow').addEventListener('click', () => {
-    const app = pickedApp()
-    const href = payLinks[app]
-    if (!href) return
-    $('waitTitle').textContent = 'Opening ' + APP_NAME[app] + '…'
-    $('waitText').textContent = 'Complete the payment of ' + $('payAmount').textContent + ' in the app, then come back here.'
-    $('payWait').hidden = false
-    $('paidBox').hidden = true
-    $('payNow').disabled = true
-    leftForApp = false
-    window.gpTrack && gpTrack('AddPaymentInfo', { currency: 'INR' })
-    window.location.href = href
-    // the screenshot step appears after a few seconds, or as soon as the customer returns from the app
-    clearTimeout(waitTimer)
-    waitTimer = setTimeout(endWait, 4500)
-  })
-  document.addEventListener('visibilitychange', () => {
-    if ($('payWait').hidden) return
-    if (document.hidden) { leftForApp = true; clearTimeout(waitTimer); return }
-    if (leftForApp) setTimeout(endWait, 700)
-  })
-  $('payAgain').addEventListener('click', () => {
-    $('paidBox').hidden = true
-    $('payNow').focus()
   })
 
   // ---------- copy ----------
@@ -303,104 +209,15 @@
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(ok, fallback)
     else fallback()
   }
-  $('copyUpi').addEventListener('click', () => copyText(cfg.upiId || '', $('copyUpi'), 'Copy UPI ID', 'UPI ID copied'))
   $('copyOrder').addEventListener('click', () => copyText($('orderNo').textContent, $('copyOrder'), 'Copy order number', 'Order number copied'))
 
   $('back1').addEventListener('click', () => show('step1'))
   $('sumEdit').addEventListener('click', () => show('step1'))
-  $('paid').addEventListener('click', () => show('step3'))
-  $('back2').addEventListener('click', () => show('step2'))
-
-  // ---------- step 3: screenshot ----------
-  let chosen = null
-  let previewUrl = null
-  const fmtSize = (b) => (b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / (1024 * 1024)).toFixed(1) + ' MB')
-  function shotError (msg) {
-    setFieldError('screenshot', msg)
-    $('dropZone').classList.toggle('is-invalid', !!msg)
-  }
-  function takeFile (file) {
-    if (!file) return
-    const looksImage = file.type ? /^image\//.test(file.type) : /\.(png|jpe?g|webp|heic|heif|gif)$/i.test(file.name)
-    if (!looksImage) { chosen = null; clearPreview(); return shotError('That file is not an image. Choose the screenshot of your payment.') }
-    if (file.size > MAX_FILE) { chosen = null; clearPreview(); return shotError('This screenshot is ' + fmtSize(file.size) + '. Choose one under 5 MB, or crop it.') }
-    chosen = file
-    shotError('')
-    if (previewUrl) URL.revokeObjectURL(previewUrl)
-    previewUrl = URL.createObjectURL(file)
-    const img = new Image()
-    img.alt = 'Your payment screenshot'
-    img.src = previewUrl
-    $('shotThumb').replaceChildren(img)
-    $('shotName').textContent = file.name || 'Screenshot'
-    $('shotSize').textContent = fmtSize(file.size)
-    $('shotEmpty').hidden = true
-    $('shotPreview').hidden = false
-  }
-  function clearPreview () {
-    if (previewUrl) URL.revokeObjectURL(previewUrl)
-    previewUrl = null
-    $('shotThumb').replaceChildren()
-    $('shotEmpty').hidden = false
-    $('shotPreview').hidden = true
-  }
-  const shot = $('screenshot')
-  shot.addEventListener('change', () => { if (shot.files && shot.files[0]) takeFile(shot.files[0]) })
-  const zone = $('dropZone')
-  ;['dragenter', 'dragover'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('is-over') }))
-  ;['dragleave', 'dragend'].forEach((ev) => zone.addEventListener(ev, () => zone.classList.remove('is-over')))
-  zone.addEventListener('drop', (e) => {
-    e.preventDefault(); zone.classList.remove('is-over')
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]
-    if (!f) return
-    try { const dt = new DataTransfer(); dt.items.add(f); shot.files = dt.files } catch (_) {}
-    takeFile(f)
-  })
-
-  $('form3').addEventListener('submit', async (e) => {
-    e.preventDefault()
-    if (!chosen) {
-      shotError('Add the screenshot of your payment to place the order.')
-      alertBox('err3', '')
-      shot.focus()
-      return
-    }
-    alertBox('err3', '')
-    const fd = new FormData()
-    for (const id of ['name', 'email', 'addressLine', 'area', 'city', 'pincode', 'carNumber', 'upiTxnId']) {
-      fd.append(id, $(id).value.trim())
-    }
-    fd.append('phone', cleanPhone($('phone').value.trim()))
-    fd.append('packs', String(packs()))
-    fd.append('screenshot', chosen, chosen.name || 'screenshot.jpg')
-    const btn = $('submitBtn')
-    btn.disabled = true
-    btn.textContent = 'Placing order…'
-    $('form3').setAttribute('aria-busy', 'true')
-    try {
-      let r
-      try { r = await fetch(API + '/orders', { method: 'POST', body: fd }) } catch (_) {
-        throw new Error('Could not reach our server. Check your internet and tap Place order again.')
-      }
-      const j = await r.json().catch(() => ({}))
-      if (!r.ok) throw new Error((j.data && j.data.info) || j.message || 'Something went wrong. Please try again.')
-      renderDone(j.data.data)
-    } catch (ex) {
-      alertBox('err3', ex.message)
-    } finally {
-      btn.disabled = false
-      btn.textContent = 'Place order'
-      $('form3').removeAttribute('aria-busy')
-    }
-  })
 
   // ---------- done ----------
-  function renderDone (o, paidOnline) {
+  function renderDone (o) {
     window.gpTrack && gpTrack('Purchase', { value: Number(o.amount) || 0, currency: 'INR' })
     $('orderNo').textContent = o.orderNo
-    $('nextPay').innerHTML = paidOnline
-      ? '<span><b>Payment confirmed.</b> We will message you on WhatsApp.</span>'
-      : '<span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span>'
     $('doneAmount').textContent = rupees(o.amount)
     const wa = $('doneWa')
     wa.href = wa.href.split('?')[0] + '?text=' + encodeURIComponent('Hi, my GaadiPass order number is ' + o.orderNo)

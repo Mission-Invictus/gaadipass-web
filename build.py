@@ -25,7 +25,7 @@ PAGES = {
               ["css/home.css"], '<script src="/js/home.js" defer></script>', ""),
     "order": ("Order — GaadiPass", "Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI, card or net banking. Delivered in Bengaluru.",
               ["css/order.css"],
-              '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script><script src="https://api.missioninvictus.com/pay.js" defer></script><script src="/order.js" defer></script>', ""),
+              '<script src="https://api.missioninvictus.com/pay.js" defer></script><script src="/order.js" defer></script>', ""),
     "terms": ("Terms & Conditions — GaadiPass", "GaadiPass terms and conditions.", ["css/pages.css"], "", ""),
     "privacy": ("Privacy Policy — GaadiPass", "How GaadiPass handles your data.", ["css/pages.css"], "", ""),
     "refund": ("Refund & Cancellation — GaadiPass", "GaadiPass refund and cancellation policy.", ["css/pages.css"], "", ""),
