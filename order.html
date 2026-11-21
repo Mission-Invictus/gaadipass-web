@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Order — GaadiPass</title>
-<meta name="description" content="Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI with PhonePe, Google Pay or Paytm. Delivered in Bengaluru.">
+<meta name="description" content="Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI, card or net banking. Delivered in Bengaluru.">
 <meta name="theme-color" content="#24272a">
 <link rel="canonical" href="https://gaadipass.missioninvictus.com/order.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="GaadiPass">
 <meta property="og:locale" content="en_IN">
 <meta property="og:title" content="Order — GaadiPass">
-<meta property="og:description" content="Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI with PhonePe, Google Pay or Paytm. Delivered in Bengaluru.">
+<meta property="og:description" content="Order 2 GaadiPass car QR stickers for ₹399. Pay by UPI, card or net banking. Delivered in Bengaluru.">
 <meta property="og:url" content="https://gaadipass.missioninvictus.com/order.html">
 <meta property="og:image" content="https://gaadipass.missioninvictus.com/assets/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -137,7 +137,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
     <!-- STEP 2: pay -->
     <section id="step2" class="step" aria-labelledby="h-step2" hidden>
       <button type="button" class="back" id="back1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Edit details</button>
-      <h2 id="h-step2" class="step-title" tabindex="-1">Pay by UPI</h2>
+      <h2 id="h-step2" class="step-title" tabindex="-1">Pay</h2>
 
       <div class="amount pillar">
         <p class="amount-label">Amount to pay</p>
@@ -145,6 +145,14 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
         <p class="amount-meta" id="payMeta">1 pack · 2 stickers · to Mission Invictus</p>
       </div>
 
+      <div class="rzp-box" id="rzpBox" hidden>
+        <button class="btn btn-pay" type="button" id="rzpPay">Pay <span class="num" id="rzpAmt">₹399</span> now</button>
+        <p class="pay-note">UPI, cards, net banking or wallets, secured by Razorpay. Confirmed instantly, no screenshot needed.</p>
+        <p class="form-alert" id="errPay" role="alert" hidden></p>
+        <button type="button" class="link" id="upiToggle" aria-expanded="false" aria-controls="upiManual">Or pay to our UPI ID and upload a screenshot</button>
+      </div>
+
+      <div id="upiManual">
       <div id="payBox">
         <div class="pay-layout">
           <div class="pay-pick">
@@ -190,6 +198,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
           <button class="btn btn-go" type="button" id="paid">Upload payment screenshot</button>
           <button type="button" class="link" id="payAgain">Payment didn't go through? Try again</button>
         </div>
+      </div>
       </div>
     </section>
 
@@ -247,7 +256,7 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
       </div>
       <h3 class="next-title">What happens next</h3>
       <ol class="next">
-        <li><span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span></li>
+        <li id="nextPay"><span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span></li>
         <li><span><b>We print your stickers</b> with your own QR code and tag code.</span></li>
         <li><span><b>Delivered in 1–3 working days</b> in Bengaluru, free.</span></li>
       </ol>
@@ -298,6 +307,6 @@ window.gpTrack=function(ev,p){try{fbq('track',ev,p||{})}catch(e){}};
     <p><a href="mailto:founder@missioninvictus.com">founder@missioninvictus.com</a> · <a href="https://wa.me/919795558442">WhatsApp us</a> · <a href="tel:+919795558442">Call us</a></p>
   </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script><script src="/order.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script><script src="https://api.missioninvictus.com/pay.js" defer></script><script src="/order.js" defer></script>
 </body>
 </html>

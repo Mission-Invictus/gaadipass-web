@@ -1,7 +1,7 @@
-// GaadiPass order flow: 1) details  2) pay by UPI  3) upload payment screenshot  -> done
+// GaadiPass order flow: 1) details  2) pay (Razorpay via common pay.js, or UPI + 3) screenshot)  -> done
 (function () {
   'use strict'
-  const API = 'https://api.missioninvictus.com/api/v1/gaadipass'
+  const API = ((window.MIPay && window.MIPay.base) || 'https://api.missioninvictus.com') + '/api/v1/gaadipass'
   const MAX_FILE = 5 * 1024 * 1024
   const $ = (id) => document.getElementById(id)
   const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel))
@@ -56,7 +56,7 @@
   const STEPS = ['step1', 'step2', 'step3', 'done']
   const STEP_STATUS = {
     step1: 'Step 1 of 3: your details',
-    step2: 'Step 2 of 3: pay by UPI',
+    step2: 'Step 2 of 3: pay',
     step3: 'Step 3 of 3: upload payment screenshot',
     done: 'Order received'
   }
@@ -191,7 +191,51 @@
       $('noUpi').hidden = false
     }
     if (!cfg.upiId) $('paidBox').hidden = true
+    // Razorpay first when the server has keys; the UPI + screenshot flow stays behind a toggle
+    const online = !!(cfg.razorpay && window.MIPay)
+    $('rzpBox').hidden = !online
+    $('rzpAmt').textContent = rupees(amount)
+    alertBox('errPay', '')
+    setUpiOpen(!online)
   }
+
+  // ---------- step 2: Razorpay (common pay.js) ----------
+  function setUpiOpen (open) {
+    $('upiManual').hidden = !open
+    $('upiToggle').setAttribute('aria-expanded', String(open))
+  }
+  $('upiToggle').addEventListener('click', () => {
+    const open = $('upiManual').hidden
+    setUpiOpen(open)
+    if (open) $('payNow').focus()
+  })
+  function orderData () {
+    const d = {}
+    for (const id of ['name', 'email', 'addressLine', 'area', 'city', 'pincode', 'carNumber']) d[id] = $(id).value.trim()
+    d.phone = cleanPhone($('phone').value.trim())
+    d.packs = packs()
+    return d
+  }
+  $('rzpPay').addEventListener('click', async () => {
+    const btn = $('rzpPay')
+    if (btn.getAttribute('aria-busy') === 'true') return
+    alertBox('errPay', '')
+    btn.setAttribute('aria-busy', 'true')
+    btn.disabled = true
+    window.gpTrack && gpTrack('AddPaymentInfo', { currency: 'INR' })
+    try {
+      const paid = await window.MIPay.checkout({ product: 'gaadipass', data: orderData(), theme: '#FFC400' })
+      const o = paid.result || {}
+      renderDone({ orderNo: o.orderNo || '', amount: o.amount || paid.amount }, true)
+    } catch (e) {
+      alertBox('errPay', e.code === 'dismissed'
+        ? 'Payment not completed. Tap Pay to try again, or pay to our UPI ID below.'
+        : e.message || 'Something went wrong. Please try again.')
+    } finally {
+      btn.removeAttribute('aria-busy')
+      btn.disabled = false
+    }
+  })
 
   // ---------- step 2: choose app → Pay → wait → upload ----------
   let payLinks = {}
@@ -351,9 +395,12 @@
   })
 
   // ---------- done ----------
-  function renderDone (o) {
+  function renderDone (o, paidOnline) {
     window.gpTrack && gpTrack('Purchase', { value: Number(o.amount) || 0, currency: 'INR' })
     $('orderNo').textContent = o.orderNo
+    $('nextPay').innerHTML = paidOnline
+      ? '<span><b>Payment confirmed.</b> We will message you on WhatsApp.</span>'
+      : '<span><b>We verify your payment</b> by hand, usually within a few hours, and confirm on WhatsApp.</span>'
     $('doneAmount').textContent = rupees(o.amount)
     const wa = $('doneWa')
     wa.href = wa.href.split('?')[0] + '?text=' + encodeURIComponent('Hi, my GaadiPass order number is ' + o.orderNo)

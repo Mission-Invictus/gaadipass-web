@@ -248,3 +248,8 @@
 .paid-box{margin-top:var(--s5);padding:var(--s5);background:var(--concrete-700)}
 .paid-box .paid-q{margin:0 0 var(--s4)}
 .paid-box .actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
+
+/* Razorpay (common pay.js) */
+.rzp-box{display:grid;gap:var(--s3);margin-bottom:var(--s5)}
+.rzp-box .link{justify-self:start;padding-left:0}
+.rzp-box .btn-pay[aria-busy="true"]{opacity:.7;cursor:progress}

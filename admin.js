@@ -4,8 +4,8 @@
 (function () {
   const API = 'https://api.missioninvictus.com/api/v1/gaadipass/admin/orders'
   const $ = (id) => document.getElementById(id)
-  const STATUSES = ['submitted', 'verified', 'shipped', 'delivered', 'cancelled']
-  const LABEL = { '': 'All', submitted: 'Submitted', verified: 'Verified', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled' }
+  const STATUSES = ['submitted', 'paid', 'verified', 'shipped', 'delivered', 'cancelled']
+  const LABEL = { '': 'All', submitted: 'Submitted', paid: 'Paid (Razorpay)', verified: 'Verified', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled' }
   let key = ''
   try { key = sessionStorage.getItem('gpAdminKey') || '' } catch (e) {}
 
@@ -96,14 +96,16 @@
           <dl class="o-pay">
             <div><dt>Packs</dt><dd>${esc(o.packs)} × 2</dd></div>
             <div><dt>Amount</dt><dd class="o-amt">${esc(rupees(o.amount))}</dd></div>
-            <div class="o-utr"><dt>UTR</dt><dd>${esc(o.upiTxnId) || '–'}</dd></div>
+            ${o.payMethod === 'razorpay'
+              ? `<div class="o-utr"><dt>Razorpay</dt><dd>${esc(o.razorpayPaymentId) || '–'}</dd></div>`
+              : `<div class="o-utr"><dt>UTR</dt><dd>${esc(o.upiTxnId) || '–'}</dd></div>`}
           </dl>
         </div>
         <div class="o-actions">
-          <button type="button" class="tool" data-shot="${no}">
+          ${o.payMethod === 'razorpay' ? '' : `<button type="button" class="tool" data-shot="${no}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18"/><path d="m4 16 5-5 4 4 2-2 5 5"/><path d="M14.5 8.5h.01"/></svg>
             View screenshot
-          </button>
+          </button>`}
           <button type="button" class="tool tool-print" data-print="${no}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8"/><path d="M7 14h10v7H7z"/></svg>
             Print stickers

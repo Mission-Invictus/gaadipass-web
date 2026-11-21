@@ -93,7 +93,7 @@
 /* status chips */
 .chip{flex:none;display:inline-flex;align-items:center;min-height:28px;padding:3px 10px;font:700 .8rem/1 var(--font-body);letter-spacing:.07em;text-transform:uppercase}
 .chip-submitted{background:var(--yellow);color:var(--ink)}
-.chip-verified{background:var(--paint);color:var(--ink)}
+.chip-verified,.chip-paid{background:var(--paint);color:var(--ink)}
 .chip-shipped{background:var(--concrete-600);color:var(--text);box-shadow:inset 0 0 0 2px var(--paint-dim)}
 .chip-delivered{background:var(--ok);color:var(--ink)}
 .chip-cancelled{background:transparent;color:var(--danger);box-shadow:inset 0 0 0 2px var(--danger)}
